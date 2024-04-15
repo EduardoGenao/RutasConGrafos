@@ -22,11 +22,15 @@ public class GrafoFunciones {
 		    		 indice = ubicaciones.size();
 		    	
 		    	
-		    	System.out.print("Nombre de la Ubicacion "+ (i+1)+"\n");
+		    	System.out.print("Nombre de la Ubicacion "+ (char)(i+65) + ": ");
 		    	String nombreUbicacion = scanner.nextLine(); // Leer el nombre de la ubicación desde la consola
+		    	if(nombreUbicacion.length() == 0) {
+		    		nombreUbicacion = ("Ubicacion " + Character.toString(i+65));
+		    		System.out.println("La Ubicacion se va a llamar por defecto " + nombreUbicacion);
+		    	}
 		    	ubicaciones.add(indice, nombreUbicacion);
 	    	}
-	    	System.out.println("Contenido del ArrayList:");
+	    	System.out.println("\nLista de Ubicaciones:");
 	        for (String ubicacion : ubicaciones) {
 	            System.out.println(ubicacion);
 	        }
@@ -47,31 +51,51 @@ public class GrafoFunciones {
 	    	
 	    	int respuesta;
 			do {
-		    	int indice1 = 0, indice2 = 0;
+				boolean encontrado = false;
+		    	int indice1 = 0, indice2 = 0, peso = 0;
 		    	Scanner scanner = new Scanner(System.in);
-		    	System.out.println("Elija las ubicaciones que quiere conectar:");
-		    	String ubicacion1 = scanner.nextLine();
-		    	System.out.println("Conectarla con:");
-		    	String ubicacion2 = scanner.nextLine();
-		    	System.out.println("Que peso tendra esta arista:");
-		    	int peso = scanner.nextInt();
-		    	for (int i = 0; i < grafoMatriz.length; i++) {
-					if(ubicaciones.get(i).equalsIgnoreCase(ubicacion1)) {
-						indice1=i;
+		    	System.out.print("\nConeccion de Ubicaciones:\nElija la primera ubicacion que quiere conectar: ");
+		    	while(!encontrado) {
+		    		String ubicacion1 = scanner.nextLine();
+		    		for (int i = 0; i < grafoMatriz.length; i++) {
+						if(ubicaciones.get(i).equalsIgnoreCase(ubicacion1)) {
+							indice1=i;
+							encontrado = true;
+						}
 					}
-					if(ubicaciones.get(i).equalsIgnoreCase(ubicacion2)) {
-						indice2=i;
+					if(!encontrado)
+						System.out.print("Ubicacion no encontrada, digite otra vez: ");
+		    	}
+		    	encontrado = false;
+		    	System.out.print("Conectarla con: ");
+		    	while(!encontrado) {
+		    		String ubicacion2 = scanner.nextLine();
+		    		for (int i = 0; i < grafoMatriz.length; i++) {
+						if(ubicaciones.get(i).equalsIgnoreCase(ubicacion2)) {
+							indice1=i;
+							encontrado = true;
+						}
 					}
-				}
+					if(!encontrado)
+						System.out.print("Ubicacion no encontrada, digite otra vez: ");
+		    	}
+		    	peso = 0;
+		    	while(peso == 0) {
+		    		System.out.print("¿Cual es la distancia entre estas dos ubicaciones (en km)?: ");
+		    		peso = scanner.nextInt();
+		    		if(peso == 0)
+		    			System.out.println("La distancia no puede ser 0");
+		    	}
+		    	
 		    	if(grafoMatriz[indice1][indice2]==0) {
 			    	grafoMatriz[indice1][indice2]=peso;
 			    	grafoMatriz[indice2][indice1]=peso;
 		    	}
 		    	else {
-		    		System.out.println("Esta ubicacion ya tiene arista\n");
+		    		System.out.println("Estas ubicaciones ya tienen una coneccion directa");
 		    		
 		    	}
-		    	System.out.println("Desea seguir agregando aristas? 1= SI, 2=NO\n");
+		    	System.out.println("\nDesea seguir agregando conecciones? 1= SI, 2=NO");
 		    	respuesta = scanner.nextInt();
 		    	int ceros=0;
 		    	if(respuesta==2) {
@@ -83,21 +107,28 @@ public class GrafoFunciones {
 							}
 						}
 		    			if(ceros==ubicaciones.size()) {
-		    				System.out.println("Debe unir todas las ubiucaciones para que sea un grafo.");
+		    				System.out.println("Hay ubicaciones que no estan conectadas, conéctelas todas");
 		    				respuesta=1;
-		    				break;
 		    			}
 					}
 		    	}
-		    	imprimirgrafoMatriz();
-
-	    	}while(respuesta==1);
-		    		
-					
-				
 		    	
+	    	}while(respuesta==1);
+			imprimirgrafoMatriz();   	
 	    }
+	    
+	    public void menuOpciones() {
+	    	Scanner scanner = new Scanner(System.in);
+	    	System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Añadir otra coneccion\n3 = Editar Una Ubicacion o sus conecciones"
+	    			+ "\n4 = Eliminar una Ubicacion\n5 = Salir del programa");
+	    	if(scanner.nextInt() == 5) {
+	    		System.out.println("Gracias por usar este programa");
+	    		return;
+	    	}
+	    }
+	    
 	    public void imprimirgrafoMatriz() {
+	    	System.out.println("\nLa lista de ubicaciones quedo así");
 	    	 // Imprimir la cabecera con las letras de los vértices
 	        System.out.print("  ");
 	        for (int i = 0; i < grafoMatriz.length; i++) {
