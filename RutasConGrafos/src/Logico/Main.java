@@ -2,6 +2,8 @@ package Logico;
 
 public class Main {
 
-//Buenos Dias
+	public static void main(String[] args) {
+		//Insertar Funcion para el main
+	}
 	
 }
