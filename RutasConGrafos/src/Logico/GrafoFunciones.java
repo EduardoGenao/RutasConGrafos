@@ -172,4 +172,34 @@ public class GrafoFunciones {
 	            System.out.println();
 	        }
 	    }
+	    public void editarGrafo() {
+	    	Scanner scanner = new Scanner(System.in);
+	    	int i=0;
+	    	boolean encontrado=false;
+	    	System.out.println("Desea editar alguna ubicacion? 1=SI 2=NO");
+	    	int respuesta = scanner.nextInt();
+	    	if(respuesta == 1) {
+	    		do {
+		    		System.out.println("Ingrese el nombre de la ubicacion");
+		    		String ubicacion = scanner.nextLine();
+		    		encontrado= false;
+		    		for ( i = 0; i < ubicaciones.size(); i++) {
+						if(ubicacion.equalsIgnoreCase(ubicaciones.get(i))) {
+							encontrado = true;
+							break;
+						}
+		    		}
+		    		if(encontrado){
+			    		System.out.println("Ingrese el nuevo nombre de la ubicacion: "+ ubicacion);
+			    		String ubicacionEditar = scanner.nextLine();
+			    		ubicaciones.get(i).valueOf(ubicacionEditar);
+		    		}
+		    		else {
+		    			System.out.println("No se encontro la ubicacion: "+ ubicacion);
+		    			
+		    		}
+	    		}while(!encontrado);
+	    		
+	    	}
+	    }
 }
