@@ -25,6 +25,4 @@ public class Arista {
 		this.peso = peso;
 	}
 
-
-
 }

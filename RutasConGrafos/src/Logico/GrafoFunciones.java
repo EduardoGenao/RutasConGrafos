@@ -31,8 +31,8 @@ public class GrafoFunciones {
 		    	ubicaciones.add(indice, nombreUbicacion);
 	    	}
 	    	System.out.println("\nLista de Ubicaciones:");
-	        for (String ubicacion : ubicaciones) {
-	            System.out.println(ubicacion);
+	        for (int i = 0; i < ubicaciones.size(); i++) {
+	            System.out.println((i+1) + ". " + ubicaciones.get(i));
 	        }
 	        // Convertir caracteres a índices numéricos (A->0, B->1, ...)
 	       
@@ -47,38 +47,35 @@ public class GrafoFunciones {
 	        
 	    }
 	   // public static void 
-	    public void agregarArista() {
+	    public void agregarArista(int indice1) {
 	    	
-	    	int respuesta;
+	    	int respuesta = 1;
 			do {
-				boolean encontrado = false;
-		    	int indice1 = 0, indice2 = 0, peso = 0,tiempo = 0;
+		    	int indice2 = 0, peso = 0,tiempo = 0;
 		    	Scanner scanner = new Scanner(System.in);
-		    	System.out.print("\nConeccion de Ubicaciones:\nElija la primera ubicacion que quiere conectar: ");
-		    	while(!encontrado) {
-		    		String ubicacion1 = scanner.nextLine();
-		    		for (int i = 0; i < grafoMatriz.getPeso().length; i++) {
-						if(ubicaciones.get(i).equalsIgnoreCase(ubicacion1)) {
-							indice1=i;
-							encontrado = true;
-						}
-					}
-					if(!encontrado)
-						System.out.print("Ubicacion no encontrada, digite otra vez: ");
+		    	if(indice1 == -1) {
+		    		System.out.print("\nConeccion de Ubicaciones:\nDigite el numero en la lista de la primera ubicacion a conectar: ");
+			    	do {
+			    		indice1 = scanner.nextInt()-1;
+						if(indice1 < 0 || indice1 >= ubicaciones.size())
+							System.out.print("Ubicacion no encontrada, digite otra vez: ");
+			    	} while(indice1 < 0 || indice1 >= ubicaciones.size());
+			    	
 		    	}
-		    	encontrado = false;
-		    	System.out.print("Conectarla con: ");
-		    	while(!encontrado) {
-		    		String ubicacion2 = scanner.nextLine();
-		    		for (int i = 0; i < grafoMatriz.getPeso().length; i++) {
-						if(ubicaciones.get(i).equalsIgnoreCase(ubicacion2)) {
-							indice1=i;
-							encontrado = true;
-						}
-					}
-					if(!encontrado)
-						System.out.print("Ubicacion no encontrada, digite otra vez: ");
+		    	else {
+		    		respuesta = 3;
+		    		System.out.println("\nAñadir otra coneccion a la Ubicacion " + ubicaciones.get(indice1));
+		    		System.out.println("\nLista de Ubicaciones:");
+			        for (int i = 0; i < ubicaciones.size(); i++) {
+			            System.out.println((i+1) + ". " + ubicaciones.get(i));
+			        }
 		    	}
+		    	System.out.print("Conectarla con (Digite otro numero de la lista): ");
+		    	do {
+		    		indice2 = scanner.nextInt()-1;
+					if(indice2 < 0 || indice2 == indice1 || indice2 >= ubicaciones.size())
+						System.out.print("Ubicacion no encontrada o igual a la anterior, digite otra vez: ");
+		    	} while(indice2 < 0 || indice2 == indice1 || indice2 >= ubicaciones.size());
 		    	peso = 0;
 		    	while(peso == 0) {
 		    		System.out.print("¿Cual es la distancia entre estas dos ubicaciones (en km)?: ");
@@ -104,40 +101,45 @@ public class GrafoFunciones {
 		    		System.out.println("Estas ubicaciones ya tienen una coneccion directa");
 		    		
 		    	}
-		    	System.out.println("\nDesea seguir agregando conecciones? 1= SI, 2=NO");
-		    	respuesta = scanner.nextInt();
-		    	int ceros=0;
-		    	if(respuesta==2) {
-		    		for (int i = 0; i < grafoMatriz.getPeso().length; i++) {
-		    			ceros=0;
-		    			for (int j = 0; j < grafoMatriz.getPeso().length; j++) {
-							if(grafoMatriz.getPeso()[i][j]==0) {
+		    	if(respuesta != 3) {
+		    		System.out.println("\nDesea seguir agregando conecciones? 1= SI, 2=NO");
+		    		respuesta = scanner.nextInt();
+		    		int ceros=0;
+		    		if(respuesta==2) {
+		    			for (int i = 0; i < grafoMatriz.getPeso().length; i++) {
+		    				ceros=0;
+		    				for (int j = 0; j < grafoMatriz.getPeso().length; j++) {
+		    					if(grafoMatriz.getPeso()[i][j]==0) {
 								ceros++;
-							}
-						}
-		    			if(ceros==ubicaciones.size()) {
-		    				System.out.println("Hay ubicaciones que no estan conectadas, conéctelas todas");
-		    				respuesta=1;
+		    					}
+		    				}
+		    				if(ceros==ubicaciones.size()) {
+		    					System.out.println("Hay ubicaciones que no estan conectadas, conéctelas todas");
+		    					respuesta=1;
+		    				}
 		    			}
-					}
+		    		}
 		    	}
-		    imprimirgrafoMatriz();  	
+		    	indice1 = -1;
 	    	}while(respuesta==1);
-			 	
+			if(respuesta == 3)
+				this.imprimirgrafoMatriz();
 	    }
 	    
-	    public int menuOpciones() {
-	    	int ext = 0;
+	    public void menuOpciones() {
 	    	Scanner scanner = new Scanner(System.in);
+	    	int ans = 0;
 		    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus conecciones"
-		    		+ "\n3 = Eliminar una Ubicacion\n10 = Salir del programa");
-		    if(scanner.nextInt() == 2)
+		    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices\n10 = Salir del programa");
+		    ans = scanner.nextInt();
+		    if(ans == 2)
 		    	this.editarUbicacion();
-		    if(scanner.nextInt() == 10) {
-		    	System.out.println("Gracias por usar este programa");
-		    	ext = 1;
+		    if(ans == 4)
+		    	this.imprimirgrafoMatriz();
+		    if(ans == 10) {
+		    	System.out.println("\n¡Gracias por usar este programa!");
+		    	return;
 		    }
-		    return ext;
 	    }
 	    
 	    public void imprimirgrafoMatriz() {
@@ -175,33 +177,36 @@ public class GrafoFunciones {
 	            }
 	            System.out.println();
 	        }
+	        this.menuOpciones();
 	    }
 	    
 	    private void editarUbicacion() {
 	    	Scanner scanner = new Scanner(System.in);
-	    	int ubicEdit = 0;
+	    	int ans = 0;
+	    	int ubicEdit = -1;
 	    	System.out.println("\nLa lista de ubicaciones es la siguiente:");
 	    	for (int i = 0; i < ubicaciones.size(); i++)
 	            System.out.println((i+1) + ". " + ubicaciones.get(i));
 	    	System.out.print("Digite el numero en la lista de la ubicacion a editar: ");
-	    	while(ubicEdit == 0 || ubicEdit > ubicaciones.size()) {
-	    		ubicEdit = scanner.nextInt();
-	    		if(ubicEdit > ubicaciones.size())
-	    			System.out.print("Ese numero no se encuentra en la lista");
-	    	}
+	    	do{
+	    		ubicEdit = scanner.nextInt()-1;
+	    		if(ubicEdit <= -1 || ubicEdit >= ubicaciones.size())
+	    			System.out.print("Ese numero no se encuentra en la lista, digite otro: ");
+	    	}while(ubicEdit <= -1 || ubicEdit > ubicaciones.size());
 	    	System.out.print("¿Que desea editar?: 1=Nombre 2=Conecciones 3=Cancelar   ");
-	    	if(scanner.nextInt() == 1) {
+	    	ans = scanner.nextInt();
+	    	if(ans == 1)
 	    		this.editarNombre(ubicEdit);
-	    		return;
-	    	}
-	    	if(scanner.nextInt() == 3)
-	    		return;
+	    	if(ans == 2)
+	    		this.editarConecciones(ubicEdit);
+	    	if(ans == 3)
+	    		this.menuOpciones();
 	    }
 	    
 	    private void editarNombre(int ubicEdit) {
 	    	String newNombre = "";
 	    	Scanner scanner = new Scanner(System.in);
-	    	System.out.print("El nombre actual es " + ubicaciones.get(ubicEdit-1) + ", Escriba el nombre nuevo para reemplazar: ");
+	    	System.out.print("El nombre actual es " + ubicaciones.get(ubicEdit) + ", Escriba el nombre nuevo para reemplazar: ");
 	    	while(newNombre.length() == 0) {
 	    		newNombre = scanner.nextLine();
 	    		if(newNombre.length() == 0) {
@@ -212,10 +217,63 @@ public class GrafoFunciones {
 		    			System.out.print("Entonces digite otra vez el nuevo nombre: ");
 	    		}
 	    	}
-	    	ubicaciones.set(ubicEdit-1, newNombre);
+	    	ubicaciones.set(ubicEdit, newNombre);
 	    	System.out.println("\nLa Nueva lista de ubicaciones es la siguiente:");
 	    	for (int i = 0; i < ubicaciones.size(); i++)
 	            System.out.println((i+1) + ". " + ubicaciones.get(i));
-	    	return;
+	    	this.menuOpciones();
 	    }
+	    
+	    private void editarConecciones(int ubicEdit) {
+	    	int resp = 0, ans = 0, newWeight = 0, newTime = 0;
+	    	Scanner scanner = new Scanner(System.in);
+	    	System.out.println("\nLas conecciones que contienen a " + ubicaciones.get(ubicEdit) + " son las siguientes:");
+	    	for(int i = 0; i < grafoMatriz.getPeso()[ubicEdit].length; i++) {
+	    		if(grafoMatriz.getPeso()[ubicEdit][i] != 0) {
+	    			System.out.println("Posicion " + (i+1) + ": De " + (ubicaciones.get(ubicEdit)) + " a " + ubicaciones.get(i) + ". Peso: "
+	    					+ (grafoMatriz.getPeso()[ubicEdit][i]) + " Tiempo: " + (grafoMatriz.getTiempo()[ubicEdit][i]));
+	    		}
+	    	}
+	    	System.out.print("Digite el numero de la coneccion a editar (0=Agregar): ");
+	    	do{
+	    		resp = scanner.nextInt()-1;
+	    		if(resp > -1 && grafoMatriz.getPeso()[ubicEdit][resp] == 0)
+	    			System.out.print("Ese numero no se encuentra en la lista, digite otro: ");
+	    	}while(resp > -1 && grafoMatriz.getPeso()[ubicEdit][resp] == 0);
+	    	
+	    	if(resp == -1)
+	    		this.agregarArista(ubicEdit);
+	    	else {
+	    		System.out.print("\n¿Quiere cambiar el peso y el tiempo?  1=Si 2=Cancelar");
+	    		ans = scanner.nextInt();
+	    		if(ans == 1) {
+	    			System.out.print("Diga el nuevo peso: ");
+	    			newWeight = scanner.nextInt();
+	    			if(newWeight <= 0 || newWeight == grafoMatriz.getPeso()[ubicEdit][resp]) {
+	    				System.out.println("Como no puso un nuevo valor, el peso se queda igual");
+	    			}
+	    			else {
+	    				grafoMatriz.getPeso()[ubicEdit][resp]=newWeight;
+				    	grafoMatriz.getPeso()[resp][ubicEdit]=newWeight;
+	    			}
+	    			System.out.print("Diga el nuevo tiempo: ");
+	    			newTime = scanner.nextInt();
+	    			if(newTime <= 0 || newTime == grafoMatriz.getPeso()[ubicEdit][resp]) {
+	    				System.out.println("Como no puso un nuevo valor, el tiempo se queda igual");
+	    			}
+	    			else {
+	    				grafoMatriz.getTiempo()[ubicEdit][resp]=newTime;
+				    	grafoMatriz.getTiempo()[resp][ubicEdit]=newTime;
+	    			}
+	    			this.menuOpciones();
+	    		}
+	    		if(ans == 2) {
+	    			this.menuOpciones();
+	    		}
+	    		
+	    	}
+	    		
+	    }
+	    
+	    
 }

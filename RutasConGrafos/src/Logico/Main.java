@@ -12,10 +12,9 @@ public class Main {
 		System.out.println();
 		GrafoFunciones grafo = new GrafoFunciones(numUbicaciones); 
 		grafo.agregarUbicacion(numUbicaciones);
-		grafo.agregarArista();
-		do {
-			ext = grafo.menuOpciones();
-		}while(ext != 1);
+		grafo.agregarArista(-1);
+		grafo.imprimirgrafoMatriz();
+		//grafo.menuOpciones(); Ahora se llama directamente de imprimirgrafoMatriz
 		return;
 	}
 	
