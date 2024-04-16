@@ -52,6 +52,7 @@ public class GrafoFunciones {
 	    	int respuesta = 1;
 			do {
 		    	int indice2 = 0, peso = 0,tiempo = 0;
+		    	boolean replace = true;
 		    	Scanner scanner = new Scanner(System.in);
 		    	if(indice1 == -1) {
 		    		System.out.print("\nConeccion de Ubicaciones:\nDigite el numero en la lista de la primera ubicacion a conectar: ");
@@ -74,7 +75,9 @@ public class GrafoFunciones {
 		    	do {
 		    		indice2 = scanner.nextInt()-1;
 					if(indice2 < 0 || indice2 == indice1 || indice2 >= ubicaciones.size())
-						System.out.print("Ubicacion no encontrada o igual a la anterior, digite otra vez: ");
+						System.out.print("Ubicacion no encontrada, digite otra vez: ");
+					if(indice2 == indice1)
+						System.out.print("No puedes conectar una ubicacion con si misma, digite otra vez:");
 		    	} while(indice2 < 0 || indice2 == indice1 || indice2 >= ubicaciones.size());
 		    	peso = 0;
 		    	while(peso == 0) {
@@ -90,17 +93,20 @@ public class GrafoFunciones {
 		    			System.out.println("El tiempo no puede ser 0");
 		    	}
 		    	
-		    	if(grafoMatriz.getPeso()[indice1][indice2]==0) {
-			    	grafoMatriz.getPeso()[indice1][indice2]=peso;
-			    	grafoMatriz.getPeso()[indice2][indice1]=peso;
-			    	grafoMatriz.getTiempo()[indice1][indice2]=tiempo;
-			    	grafoMatriz.getTiempo()[indice2][indice1]=tiempo;
-			    	
+		    	if(grafoMatriz.getPeso()[indice1][indice2]!=0) {
+		    		System.out.println("Estas ubicaciones ya tienen una coneccion directa, ¿desea reemplazar"
+		    				+ " los viejos valores por los nuevos? 1=Si 2=No");
+		    		if(scanner.nextInt() != 1)
+		    			replace = false ;
 		    	}
-		    	else {
-		    		System.out.println("Estas ubicaciones ya tienen una coneccion directa");
+		    		if(replace == true) {
+		    			grafoMatriz.getPeso()[indice1][indice2]=peso;
+				    	grafoMatriz.getPeso()[indice2][indice1]=peso;
+				    	grafoMatriz.getTiempo()[indice1][indice2]=tiempo;
+				    	grafoMatriz.getTiempo()[indice2][indice1]=tiempo;
+		    		}
+		    		replace = true;
 		    		
-		    	}
 		    	if(respuesta != 3) {
 		    		System.out.println("\nDesea seguir agregando conecciones? 1= SI, 2=NO");
 		    		respuesta = scanner.nextInt();
@@ -244,7 +250,7 @@ public class GrafoFunciones {
 	    	if(resp == -1)
 	    		this.agregarArista(ubicEdit);
 	    	else {
-	    		System.out.print("\n¿Quiere cambiar el peso y el tiempo?  1=Si 2=Cancelar");
+	    		System.out.print("\n¿Quiere cambiar el peso y el tiempo?  1=Si 2=Cancelar 3=Eliminar Coneccion");
 	    		ans = scanner.nextInt();
 	    		if(ans == 1) {
 	    			System.out.print("Diga el nuevo peso: ");
@@ -270,7 +276,41 @@ public class GrafoFunciones {
 	    		if(ans == 2) {
 	    			this.menuOpciones();
 	    		}
-	    		
+	    		if(ans == 3) {
+	    			System.out.print("¿Seguro que quiere eliminar esta coneccion? 1=Si 2=No");
+	    			ans = scanner.nextInt();
+	    			if(ans == 1) {
+	    				boolean getcut = false;
+	    				int ceros=0;
+	    				for (int j = 0; j < grafoMatriz.getPeso().length; j++) {
+	    					if(grafoMatriz.getPeso()[ubicEdit][j]==0) {
+							ceros++;
+	    					}
+	    				}
+	    				if(ceros>=ubicaciones.size()-1)
+	    					getcut = true;
+	    				ceros=0;
+	    				for (int j = 0; j < grafoMatriz.getPeso().length; j++) {
+	    					if(grafoMatriz.getPeso()[resp][j]==0) {
+							ceros++;
+	    					}
+	    				}
+	    				if(ceros>=ubicaciones.size()-1)
+	    					getcut = true;
+	    				if(getcut == true)
+	    					System.out.println("La coneccion no se puede eliminar porque una o ambas ubicaciones quedarian aisladas");
+	    				else {
+	    					grafoMatriz.getPeso()[ubicEdit][resp]=0;
+					    	grafoMatriz.getPeso()[resp][ubicEdit]=0;
+					    	grafoMatriz.getTiempo()[ubicEdit][resp]=newTime;
+					    	grafoMatriz.getTiempo()[resp][ubicEdit]=newTime;
+	    				}
+	    				this.menuOpciones();
+	    			}
+	    			if(ans == 2) {
+	    				this.menuOpciones();
+	    			}
+	    		}
 	    	}
 	    		
 	    }
