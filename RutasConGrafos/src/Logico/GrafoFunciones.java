@@ -126,14 +126,18 @@ public class GrafoFunciones {
 			 	
 	    }
 	    
-	    public void menuOpciones() {
+	    public int menuOpciones() {
+	    	int ext = 0;
 	    	Scanner scanner = new Scanner(System.in);
-	    	System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Añadir otra coneccion\n3 = Editar Una Ubicacion o sus conecciones"
-	    			+ "\n4 = Eliminar una Ubicacion\n5 = Salir del programa");
-	    	if(scanner.nextInt() == 5) {
-	    		System.out.println("Gracias por usar este programa");
-	    		return;
-	    	}
+		    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus conecciones"
+		    		+ "\n3 = Eliminar una Ubicacion\n10 = Salir del programa");
+		    if(scanner.nextInt() == 2)
+		    	this.editarUbicacion();
+		    if(scanner.nextInt() == 10) {
+		    	System.out.println("Gracias por usar este programa");
+		    	ext = 1;
+		    }
+		    return ext;
 	    }
 	    
 	    public void imprimirgrafoMatriz() {
@@ -154,7 +158,7 @@ public class GrafoFunciones {
 	            }
 	            System.out.println();
 	        }
-	        System.out.println("\nLa lista de ubicaciones quedo así (Tiempo)");
+	        System.out.println("\nLa lista de Tiempos quedo así (Tiempo)");
 	    	 // Imprimir la cabecera con las letras de los vértices
 	        System.out.print("  ");
 	        for (int i = 0; i < grafoMatriz.getTiempo().length; i++) {
@@ -171,5 +175,47 @@ public class GrafoFunciones {
 	            }
 	            System.out.println();
 	        }
+	    }
+	    
+	    private void editarUbicacion() {
+	    	Scanner scanner = new Scanner(System.in);
+	    	int ubicEdit = 0;
+	    	System.out.println("\nLa lista de ubicaciones es la siguiente:");
+	    	for (int i = 0; i < ubicaciones.size(); i++)
+	            System.out.println((i+1) + ". " + ubicaciones.get(i));
+	    	System.out.print("Digite el numero en la lista de la ubicacion a editar: ");
+	    	while(ubicEdit == 0 || ubicEdit > ubicaciones.size()) {
+	    		ubicEdit = scanner.nextInt();
+	    		if(ubicEdit > ubicaciones.size())
+	    			System.out.print("Ese numero no se encuentra en la lista");
+	    	}
+	    	System.out.print("¿Que desea editar?: 1=Nombre 2=Conecciones 3=Cancelar   ");
+	    	if(scanner.nextInt() == 1) {
+	    		this.editarNombre(ubicEdit);
+	    		return;
+	    	}
+	    	if(scanner.nextInt() == 3)
+	    		return;
+	    }
+	    
+	    private void editarNombre(int ubicEdit) {
+	    	String newNombre = "";
+	    	Scanner scanner = new Scanner(System.in);
+	    	System.out.print("El nombre actual es " + ubicaciones.get(ubicEdit-1) + ", Escriba el nombre nuevo para reemplazar: ");
+	    	while(newNombre.length() == 0) {
+	    		newNombre = scanner.nextLine();
+	    		if(newNombre.length() == 0) {
+	    			System.out.print("No hay nombre, ¿desea Cancelar? 1=Si, 2=No");
+		    		if(scanner.nextInt()==1)
+		    			return;
+		    		if(scanner.nextInt()==2)
+		    			System.out.print("Entonces digite otra vez el nuevo nombre: ");
+	    		}
+	    	}
+	    	ubicaciones.set(ubicEdit-1, newNombre);
+	    	System.out.println("\nLa Nueva lista de ubicaciones es la siguiente:");
+	    	for (int i = 0; i < ubicaciones.size(); i++)
+	            System.out.println((i+1) + ". " + ubicaciones.get(i));
+	    	return;
 	    }
 }
