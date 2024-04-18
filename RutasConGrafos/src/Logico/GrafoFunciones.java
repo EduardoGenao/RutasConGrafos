@@ -350,7 +350,7 @@ public class GrafoFunciones {
 	                ", se eliminaran las conexiones que conectan con:\n");
 	        for (int i = 0; i < ubicaciones.size(); i++) {
 	            if (grafoMatriz.getPeso()[resp - 1][i] != 0) {
-	                System.out.print(grafoMatriz.getPeso()[resp - 1][i] + "\n");
+	                System.out.print(ubicaciones.get(i) + "\n");
 	                // Eliminar la arista
 	                grafoMatriz.getPeso()[resp - 1][i] = 0;
 	                grafoMatriz.getPeso()[i][resp - 1] = 0;
