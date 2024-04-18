@@ -2,6 +2,7 @@ package Logico;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class GrafoFunciones {
 	    private static Arista grafoMatriz;
@@ -151,12 +152,13 @@ public class GrafoFunciones {
 	    public void menuOpciones() {
 	    	int ans = 0;
 	    	do {
-		    	Scanner scanner = new Scanner(System.in);
+		    	Scanner scanner = new Scanner(System.in); 
 		    	
 			    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus conecciones"
-			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices\n10 = Salir del programa");
+			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices \n6 = Encontrar la ruta interconectada mas corta "
+			    		+ "\n10 = Salir del programa");
 			    ans = scanner.nextInt();
-			    if(ans==1)
+			    if(ans == 1)
 			    	this.agregarUbicacionExtra(ubicaciones.size());
 			    if(ans == 2)
 			    	this.editarUbicacion();
@@ -164,6 +166,8 @@ public class GrafoFunciones {
 			    	this.eliminarUbicacion();
 			    if(ans == 4)
 			    	this.imprimirgrafoMatriz();
+			    if(ans == 6)
+			    	this.primPeso(ubicaciones.size());
 			    if(ans == 10) {
 			    	System.out.println("\n¡Gracias por usar este programa!");
 			    }
@@ -336,6 +340,7 @@ public class GrafoFunciones {
 	    	}
 	    		
 	    }
+	    
 	    public void eliminarUbicacion() {
 	        Scanner scanner = new Scanner(System.in);
 	        System.out.println("\nLista de Ubicaciones:");
@@ -412,7 +417,6 @@ public class GrafoFunciones {
 	        grafoMatriz.setTiempo(nuevaMatriz.getTiempo());
 	    }
 
-	    
 	    public void agregarUbicacionExtra(int numUbicaciones) {
 	    	Scanner scanner = new Scanner(System.in);
 	    	System.out.print("Cuantas ubicaciones extra desea?");
@@ -436,6 +440,7 @@ public class GrafoFunciones {
 	        
 	    	
 	    }
+	    
 	    public void agregarAristaExtra(int indice1, int numUbicaciones) {
 	    	Arista nueva = new Arista(numUbicaciones);
 	    	for (int i = 0; i < grafoMatriz.getPeso().length; i++) {
@@ -528,4 +533,100 @@ public class GrafoFunciones {
 			
 	    }
 	    
+	    private void primPeso(int numVertices) {
+	    	//Se crea un array boolean para verificar que cada ubicacion este en el arbol, se rellena con falsos.
+	    	boolean[] dentroPrim = new boolean[numVertices];
+            Arrays.fill(dentroPrim, false);
+            boolean pesoTiempo = false;
+
+            //Se crea una llave para 
+            int[] llave = new int[numVertices];
+            Arrays.fill(llave, Integer.MAX_VALUE);
+
+            llave[0] = 0;
+            int[] padres = new int[numVertices];
+            padres[0] = -1;
+
+            for (int count = 0; count < numVertices - 1; count++) {
+                int u = minLlave(llave, dentroPrim, numVertices);
+                dentroPrim[u] = true;
+
+                for (int i = 0; i < ubicaciones.size(); i++) {	
+                    int peso = grafoMatriz.getPeso()[u][i];
+                    if (!dentroPrim[i] && (peso != 0 && peso < llave[i])) {
+                        padres[i] = u;
+                        llave[i] = peso;
+                    }
+                }
+            }
+	    	this.printPrim(padres, numVertices, pesoTiempo);
+	    	this.primTiempo(numVertices);
+	    }
+	    
+	    private void primTiempo(int numVertices) {
+	    	//Se crea un array boolean para verificar que cada ubicacion este en el arbol, se rellena con falsos.
+	    	boolean[] dentroPrim = new boolean[numVertices];
+            Arrays.fill(dentroPrim, false);
+            boolean pesoTiempo = true;
+
+            //Se crea una llave para 
+            int[] llave = new int[numVertices];
+            Arrays.fill(llave, Integer.MAX_VALUE);
+
+            llave[0] = 0;
+            int[] padres = new int[numVertices];
+            padres[0] = -1;
+
+            for (int count = 0; count < numVertices - 1; count++) {
+                int u = minLlave(llave, dentroPrim, numVertices);
+                dentroPrim[u] = true;
+
+                for (int i = 0; i < numVertices; i++) {	
+                    int tiempo = grafoMatriz.getTiempo()[u][i];
+                    if (!dentroPrim[i] && (tiempo != 0 && tiempo < llave[i])) {
+                        padres[i] = u;
+                        llave[i] = tiempo;
+                    }
+                }
+            }
+	    	this.printPrim(padres, numVertices, pesoTiempo);
+	    	this.menuOpciones();
+	    }
+	    
+	    private int minLlave(int[] llave, boolean[] dentroPrim, int numVertices) {
+	    	//min inicia como el numero maximo
+            int min = Integer.MAX_VALUE;
+          //El lugar del minimo, inicialmente no existe
+            int minIndex = -1;
+
+          //for que chequea todos los vertices
+            for (int v = 0; v < numVertices; v++) {
+            	//Si (el vertice seleccionado) esta fuera del arbol de prim y la llave del vertice es menor que el minimo
+                if (!dentroPrim[v] && llave[v] < min) {
+                	//El nuevo minimo es la llave de vertice seleccionado
+                    min = llave[v];
+                  //El lugar del minimo es el lugar del vertice.
+                    minIndex = v;
+                }
+            }
+            //Se devuelve el lugar del minimo
+            return minIndex;
+	    }
+	    
+	    private void printPrim (int[] padres, int numVertices, boolean pesoTiempo) {
+	    	if(pesoTiempo == false) {
+	    		System.out.println("\nLa interconeccion mas corta en cuanto a distancia es:");
+	            for (int i = 1; i < numVertices; i++) {
+	                System.out.println(ubicaciones.get(padres[i]) + " - " + ubicaciones.get(i) + "        "
+	                	+ grafoMatriz.getPeso()[padres[i]][i] + " kilómetros");
+	            }
+	    	}
+	    	else {
+	    		System.out.println("\nLa interconeccion mas corta en cuanto a distancia es:");
+	            for (int i = 1; i < numVertices; i++) {
+	                System.out.println(ubicaciones.get(padres[i]) + " - " + ubicaciones.get(i) + "        "
+	                	+ grafoMatriz.getTiempo()[padres[i]][i] + " minutos");
+	            }
+	    	}
+	    }
 }
