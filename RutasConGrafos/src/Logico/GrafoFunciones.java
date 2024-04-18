@@ -366,7 +366,25 @@ public class GrafoFunciones {
 	            ubicaciones.remove(resp - 1);
 	            // Ajustar el tamaño de la matriz
 	            ajustarMatriz(resp - 1);
+	            int ceros;
+	            for (int i = 0; i < grafoMatriz.getPeso().length; i++) {
+    				ceros=0;
+    				for (int j = 0; j < grafoMatriz.getPeso().length; j++) {
+    					if(grafoMatriz.getPeso()[i][j]==0) {
+						ceros++;
+    					}
+    				}
+    				if(ceros==ubicaciones.size()) {
+    					System.out.println("Hay ubicaciones que no estan conectadas, conéctelas todas");
+    					System.out.println("\nLista de Ubicaciones:");
+    			        for (int k = 0; k < ubicaciones.size(); k++) {
+    			            System.out.println((k+1) + ". " + ubicaciones.get(k));
+    			        }
+    					this.agregarArista(-1);
+    				}
+    			}
 	        }
+	        
 	    }
 
 	    public void ajustarMatriz(int indiceEliminar) {
