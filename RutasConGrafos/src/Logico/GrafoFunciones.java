@@ -2,7 +2,10 @@ package Logico;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class GrafoFunciones {
 	    private static Arista grafoMatriz;
@@ -155,8 +158,8 @@ public class GrafoFunciones {
 		    	Scanner scanner = new Scanner(System.in); 
 		    	
 			    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus conecciones"
-			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices \n5 = Encontrar ruta mas corta \n6 = Encontrar la ruta interconectada mas corta "
-			    		+ "\n10 = Salir del programa");
+			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices\n5 = Encontrar ruta mas corta"
+			    		+ "\n6 = Encontrar la ruta de distancia/tiempo mas corta entre todos los nodos\n10 = Salir del programa");
 			    ans = scanner.nextInt();
 			    if(ans == 1)
 			    	this.agregarUbicacionExtra(ubicaciones.size());
@@ -562,38 +565,95 @@ public class GrafoFunciones {
                 }
             }
 	    	this.printPrim(padres, numVertices, pesoTiempo);
-	    	this.primTiempo(numVertices);
+	    	this.kruskalTiempo(numVertices);
 	    }
 	    
-	    private void primTiempo(int numVertices) {
-	    	//Se crea un array boolean para verificar que cada ubicacion este en el arbol, se rellena con falsos.
-	    	boolean[] dentroPrim = new boolean[numVertices];
-            Arrays.fill(dentroPrim, false);
-            boolean pesoTiempo = true;
-
-            //Se crea una llave para 
-            int[] llave = new int[numVertices];
-            Arrays.fill(llave, Integer.MAX_VALUE);
-
-            llave[0] = 0;
+	    private void kruskalTiempo(int numVertices) {
+	    	//Se crea una lista de aristas que representa el arbol
+	    	int[][] dentroKruskal = new int[numVertices-1][2];
+            // Sort edges by weight
+	    	int cantTiempos = 0;
+            int[] tiempos = new int [numVertices*numVertices];
+            for(int i = 0; i < numVertices; i++) {
+            	for(int j = i; j < numVertices; j++)
+            		if(grafoMatriz.getTiempo()[i][j] != 0) {
+            			tiempos[cantTiempos] = grafoMatriz.getTiempo()[i][j];
+            			cantTiempos++;
+            		}
+            }
+            Arrays.sort(tiempos);
+            //Se cre un arreglo para los nodos padres
             int[] padres = new int[numVertices];
-            padres[0] = -1;
+            //for que recorre todos los vertices
+            for (int i = 0; i < numVertices; i++)
+            	//El nodo padre de cada nodo es ese mismo nodo
+                padres[i] = i;
 
-            for (int count = 0; count < numVertices - 1; count++) {
-                int u = minLlave(llave, dentroPrim, numVertices);
-                dentroPrim[u] = true;
+            //Variable que cuenta las aristas
+            int cuentAristas = 0;
+            //Variable que indica la posicion
+            int index = 0;
+            //Mientras la cuenta de aristas sea menor a la cantidad de vertices - 1
+            while (cuentAristas < numVertices - 1) {
+            	//La proxima arista es la arista señalada por el indice, el valor del indice luego aumenta en 1
+                int[] nodos = buscartiempo(tiempos[index++], numVertices);
+                //La fuente del padre es el resultado de la funcion find con el arreglo de padres y el nodo de origen de la proxima arista
+                int sourceParent = buscarArista(padres, nodos[0]);
+                //Lo mismo pero ahora con el nodo de destino de la proxima arista
+                int destinationParent = buscarArista(padres, nodos[1]);
 
-                for (int i = 0; i < numVertices; i++) {	
-                    int tiempo = grafoMatriz.getTiempo()[u][i];
-                    if (!dentroPrim[i] && (tiempo != 0 && tiempo < llave[i])) {
-                        padres[i] = u;
-                        llave[i] = tiempo;
-                    }
+                //Si el padre del origen es diferente al padre del destino
+                if (sourceParent != destinationParent) {
+                	//Se añade la arista a la lista del arbol
+                    dentroKruskal[cuentAristas] = nodos;
+                    //Se llama la funcion union con el arreglo padres y los dos padres
+                    union(padres, sourceParent, destinationParent);
+                    //Se añade una arista a la cuenta
+                    cuentAristas++;
                 }
             }
-	    	this.printPrim(padres, numVertices, pesoTiempo);
-	    	this.menuOpciones();
+
+            System.out.println("\nEn cuanto a tiempo, la interconeccion mas corta es:");
+            for (int i = 0; i < numVertices-1; i++) {
+                System.out.println(ubicaciones.get(dentroKruskal[i][0]) + " - " + ubicaciones.get(dentroKruskal[i][1]) 
+                + "        " + grafoMatriz.getTiempo()[dentroKruskal[i][0]][dentroKruskal[i][1]] + " segundos");
+            }
+            
+            this.menuOpciones();
+        }
+	    
+	    private int[] buscartiempo(int tiempo, int numVertices) {
+	    	int[] nodos = new int[2];
+	    	for(int i = 0; i < numVertices; i++) {
+            	for(int j = i; j < numVertices; j++)
+            		if(grafoMatriz.getTiempo()[i][j] == tiempo) {
+            			nodos[0] = i;
+            			nodos[1] = j;
+            			return nodos;
+            		}
+            }
+	    	return nodos;
 	    }
+
+        private int buscarArista(int[] parent, int vertex) {
+        	//Si el padre del nodo de origen/destino de la proxima arista no es ese mismo nodo
+            if (parent[vertex] != vertex)
+            	//El padre del nodo es el resultado de esta misma funcion con el padre del nodo anterior 
+                parent[vertex] = buscarArista(parent, parent[vertex]);
+            //Se retorna el padre del nodo de origen/destino
+            return parent[vertex];
+        }
+
+        
+        private void union(int[] parent, int x, int y) {
+        	//xSet = el padre de x
+            int xSet = buscarArista(parent, x);
+            //ySet = el padre de y
+            int ySet = buscarArista(parent, y);
+            //El padre de ySet es xSet
+            parent[ySet] = xSet;
+
+        }
 	    
 	    private int minLlave(int[] llave, boolean[] dentroPrim, int numVertices) {
 	    	//min inicia como el numero maximo
@@ -715,5 +775,4 @@ public class GrafoFunciones {
 
 	        return minIndex;
 	    }
-	
 }
