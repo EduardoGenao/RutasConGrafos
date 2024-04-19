@@ -155,7 +155,7 @@ public class GrafoFunciones {
 		    	Scanner scanner = new Scanner(System.in); 
 		    	
 			    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus conecciones"
-			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices \n6 = Encontrar la ruta interconectada mas corta "
+			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices \n5 = Encontrar ruta mas corta \n6 = Encontrar la ruta interconectada mas corta "
 			    		+ "\n10 = Salir del programa");
 			    ans = scanner.nextInt();
 			    if(ans == 1)
@@ -166,6 +166,8 @@ public class GrafoFunciones {
 			    	this.eliminarUbicacion();
 			    if(ans == 4)
 			    	this.imprimirgrafoMatriz();
+			    if(ans == 5)
+			    	this.dijkstra();
 			    if(ans == 6)
 			    	this.primPeso(ubicaciones.size());
 			    if(ans == 10) {
@@ -629,4 +631,89 @@ public class GrafoFunciones {
 	            }
 	    	}
 	    }
+	    
+	    public void dijkstra() {
+	    	
+	    	int inicio = 0, fin = 0;
+	    	Scanner scanner = new Scanner(System.in);
+	    	System.out.println("\nLista de Ubicaciones:");
+	        for (int i = 0; i < ubicaciones.size(); i++) {
+	            System.out.println((i+1) + ". " + ubicaciones.get(i));
+	        }
+	    	System.out.print("Indique el numero de la ubicacion en la que quiere iniciar: ");
+	    	inicio= scanner.nextInt();
+	    	inicio-=1;
+	    	System.out.print("Indique el numero de la ubicacion en la que quiere terminar: ");
+	    	fin= scanner.nextInt();
+	    	fin-=1;
+	        int numVertices = ubicaciones.size();
+	        int[] distancias = new int[numVertices];
+	        boolean[] visitado = new boolean[numVertices];
+	        
+	        int[][] grafoCombinado = new int[numVertices][numVertices];
+	        for (int i = 0; i < numVertices; i++) {
+				for (int j = 0; j < numVertices; j++) {
+					grafoCombinado[i][j]=grafoMatriz.getPeso()[i][j]+grafoMatriz.getTiempo()[i][j];
+				}
+			}
+
+	        // Initialize distances to infinity and mark all vertices as unvisited
+	        for (int i = 0; i < numVertices; i++) {
+	            distancias[i] = Integer.MAX_VALUE;
+	            visitado[i] = false;
+	        }
+
+	        // Distance of source vertex from itself is always 0
+	        distancias[inicio] = 0;
+
+	        // Find shortest path for all vertices
+	        for (int count = 0; count < numVertices - 1; count++) {
+	            int u = minDistance(distancias, visitado);
+	            visitado[u] = true;
+
+	            // Update distances of adjacent vertices
+	            for (int v = 0; v < numVertices; v++) {
+	                if (!visitado[v] && grafoCombinado[u][v] != 0 &&
+	                        distancias[u] != Integer.MAX_VALUE &&
+	                        distancias[u] + grafoCombinado[u][v] < distancias[v]) {
+	                    distancias[v] = distancias[u] + grafoCombinado[u][v];
+	                }
+	            }
+	        }
+
+	        // Print the shortest path distance
+	        System.out.println("La distancia mas corta entre " + ubicaciones.get(inicio) +
+	                " y " + ubicaciones.get(fin) + " es: " + distancias[fin]);
+	        System.out.println("Grafo combinado de peso y tiempo\n");
+	        System.out.print("  ");
+	        for (int i = 0; i < ubicaciones.size(); i++) {
+	            System.out.print((char) ('A' + i) + " ");
+	        }
+	        System.out.println();
+	        
+	        // Imprimir la grafocombinado con las letras de los vértices como índice
+	        for (int i = 0; i < ubicaciones.size(); i++) {
+	            // Imprimir la letra del vértice al inicio de cada fila
+	            System.out.print((char) ('A' + i) + " ");
+	            for (int j = 0; j < ubicaciones.size(); j++) {
+	                System.out.print(grafoCombinado[i][j] + " ");
+	            }
+	            System.out.println();
+	        }
+	    }
+	    public int minDistance(int[] distancias, boolean[] visitado) {
+	        int min = Integer.MAX_VALUE;
+	        int minIndex = -1;
+	        int numVertices = distancias.length;
+
+	        for (int v = 0; v < numVertices; v++) {
+	            if (!visitado[v] && distancias[v] <= min) {
+	                min = distancias[v];
+	                minIndex = v;
+	            }
+	        }
+
+	        return minIndex;
+	    }
+	
 }
