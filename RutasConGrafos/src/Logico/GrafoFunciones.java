@@ -159,7 +159,8 @@ public class GrafoFunciones {
 		    	
 			    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus conecciones"
 			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices\n5 = Encontrar ruta mas corta"
-			    		+ "\n6 = Encontrar la ruta de distancia/tiempo mas corta entre todos los nodos\n10 = Salir del programa");
+			    		+ "\n6 = Encontrar la ruta de distancia/tiempo mas corta entre todos los nodos \n7 = Encontrar el camino más corto entre todas las ubicaciones\n" + 
+			    		"\n10 = Salir del programa");
 			    ans = scanner.nextInt();
 			    if(ans == 1)
 			    	this.agregarUbicacionExtra(ubicaciones.size());
@@ -173,6 +174,8 @@ public class GrafoFunciones {
 			    	this.dijkstra();
 			    if(ans == 6)
 			    	this.primPeso(ubicaciones.size());
+			    if(ans == 7)
+			    	this.floydWarshall();
 			    if(ans == 10) {
 			    	System.out.println("\n¡Gracias por usar este programa!");
 			    }
@@ -709,41 +712,71 @@ public class GrafoFunciones {
 	        int numVertices = ubicaciones.size();
 	        int[] distancias = new int[numVertices];
 	        boolean[] visitado = new boolean[numVertices];
+	        int[] distanciasPeso = new int[numVertices];
+	        boolean[] visitadoPeso = new boolean[numVertices];
+	        int[] distanciasTiempo = new int[numVertices];
+	        boolean[] visitadoTiempo = new boolean[numVertices];
 	        
 	        int[][] grafoCombinado = new int[numVertices][numVertices];
+	        
 	        for (int i = 0; i < numVertices; i++) {
 				for (int j = 0; j < numVertices; j++) {
 					grafoCombinado[i][j]=grafoMatriz.getPeso()[i][j]+grafoMatriz.getTiempo()[i][j];
 				}
 			}
 
-	        // Initialize distances to infinity and mark all vertices as unvisited
+	        // inicializa distancias a infinito y las marca como no visitada
 	        for (int i = 0; i < numVertices; i++) {
 	            distancias[i] = Integer.MAX_VALUE;
 	            visitado[i] = false;
+	            distanciasPeso[i] = Integer.MAX_VALUE;
+	            visitadoPeso[i] = false;
+	            distanciasTiempo[i] = Integer.MAX_VALUE;
+	            visitadoTiempo[i] = false;
 	        }
 
-	        // Distance of source vertex from itself is always 0
+	        // distancia inicio siempre es cero
 	        distancias[inicio] = 0;
+	        distanciasPeso[inicio] = 0;
+	        distanciasTiempo[inicio] = 0;
 
-	        // Find shortest path for all vertices
+	        // encontrar la menor distancia entre vertices
 	        for (int count = 0; count < numVertices - 1; count++) {
 	            int u = minDistance(distancias, visitado);
 	            visitado[u] = true;
+	            int peso = minDistance(distanciasPeso, visitadoPeso);
+	            visitadoPeso[peso] = true;
+	            int tiempo = minDistance(distanciasTiempo, visitadoTiempo);
+	            visitadoTiempo[tiempo] = true;
+	            
 
-	            // Update distances of adjacent vertices
+	            //actualiar distancia de vertices adyacentes
 	            for (int v = 0; v < numVertices; v++) {
 	                if (!visitado[v] && grafoCombinado[u][v] != 0 &&
 	                        distancias[u] != Integer.MAX_VALUE &&
 	                        distancias[u] + grafoCombinado[u][v] < distancias[v]) {
 	                    distancias[v] = distancias[u] + grafoCombinado[u][v];
 	                }
+	                if (!visitadoPeso[v] && grafoMatriz.getPeso()[u][v] != 0 &&
+	                        distanciasPeso[u] != Integer.MAX_VALUE &&
+	                        distanciasPeso[u] + grafoMatriz.getPeso()[u][v] < distanciasPeso[v]) {
+	                    distanciasPeso[v] = distanciasPeso[u] + grafoMatriz.getPeso()[u][v];
+	                }
+	                if (!visitadoTiempo[v] && grafoMatriz.getTiempo()[u][v] != 0 &&
+	                        distanciasTiempo[u] != Integer.MAX_VALUE &&
+	                        distanciasTiempo[u] + grafoMatriz.getTiempo()[u][v] < distanciasTiempo[v]) {
+	                    distanciasTiempo[v] = distanciasTiempo[u] + grafoMatriz.getTiempo()[u][v];
+	                }
 	            }
 	        }
 
-	        // Print the shortest path distance
-	        System.out.println("La distancia mas corta entre " + ubicaciones.get(inicio) +
+	        // Print la distancia mas corta
+	        System.out.println("La distancia mas corta combinando el tiempo y la distancia entre " + ubicaciones.get(inicio) +
 	                " y " + ubicaciones.get(fin) + " es: " + distancias[fin]);
+	        System.out.println("La distancia mas corta teniendo en cuenta el tiempoc entre " + ubicaciones.get(inicio) +
+	                " y " + ubicaciones.get(fin) + " es: " + distanciasTiempo[fin]);
+	        System.out.println("La distancia mas corta teniendo en cuenta la distancia entre " + ubicaciones.get(inicio) +
+	                " y " + ubicaciones.get(fin) + " es: " + distanciasPeso[fin]);
 	        System.out.println("Grafo combinado de peso y tiempo\n");
 	        System.out.print("  ");
 	        for (int i = 0; i < ubicaciones.size(); i++) {
@@ -760,6 +793,7 @@ public class GrafoFunciones {
 	            }
 	            System.out.println();
 	        }
+	        imprimirgrafoMatriz();
 	    }
 	    public int minDistance(int[] distancias, boolean[] visitado) {
 	        int min = Integer.MAX_VALUE;
@@ -775,4 +809,82 @@ public class GrafoFunciones {
 
 	        return minIndex;
 	    }
+	    public void floydWarshall() {
+	    	
+	        int numVertices = ubicaciones.size();
+	        //int[][] grafo = new int[numVertices][numVertices];
+	        int[][] distancias = new int[numVertices][numVertices];
+	        int[][] camino = new int[numVertices][numVertices];
+	        int[][] distanciasTiempo = new int[numVertices][numVertices];
+	        int[][] caminoTiempo = new int[numVertices][numVertices];
+	        
+	        // Inicializar la matriz de distancias con los valores del grafo
+	        for (int i = 0; i < numVertices; i++) {
+	            for (int j = 0; j < numVertices; j++) {
+	                distancias[i][j] = grafoMatriz.getPeso()[i][j];
+	                distanciasTiempo[i][j] = grafoMatriz.getTiempo()[i][j];
+	                if(grafoMatriz.getPeso()[i][j]==0 && i!=j) {
+	                	distancias[i][j]=Integer.MAX_VALUE;
+	                	distanciasTiempo[i][j]=Integer.MAX_VALUE;
+	                }
+	                	
+	                if (grafoMatriz.getPeso()[i][j] != Integer.MAX_VALUE && i != j) {
+	                    camino[i][j] = i;
+	                    caminoTiempo[i][j] = i;
+	                } else {
+	                    camino[i][j] = -1;
+	                    caminoTiempo[i][j] = -1;
+	                }
+	            }
+	        }
+
+	        // Algoritmo de Floyd-Warshall
+	        for (int k = 0; k < numVertices; k++) {
+	            for (int i = 0; i < numVertices; i++) {
+	                for (int j = 0; j < numVertices; j++) {
+	                    if (distancias[i][k] != Integer.MAX_VALUE && distancias[k][j] != Integer.MAX_VALUE && 
+	                        distancias[i][k] + distancias[k][j] < distancias[i][j]) {
+	                        distancias[i][j] = distancias[i][k] + distancias[k][j];
+	                        camino[i][j] = camino[k][j];
+	                    }
+	                    if (distanciasTiempo[i][k] != Integer.MAX_VALUE && distanciasTiempo[k][j] != Integer.MAX_VALUE && 
+		                        distanciasTiempo[i][k] + distanciasTiempo[k][j] < distanciasTiempo[i][j]) {
+		                        distanciasTiempo[i][j] = distanciasTiempo[i][k] + distanciasTiempo[k][j];
+		                        caminoTiempo[i][j] = caminoTiempo[k][j];
+		                    }
+	                }
+	            }
+	        }
+	        System.out.print("Resultados con el peso\n");
+	        // Imprimir los resultados
+	        for (int i = 0; i < numVertices; i++) {
+	            for (int j = 0; j < numVertices; j++) {
+	                // Si la distancia es Integer.MAX_VALUE, significa que no hay conexión directa
+	                if (distancias[i][j] == Integer.MAX_VALUE) {
+	                    // En este caso, se imprime "INF" para indicar que no hay conexión directa
+	                    System.out.print("INF\t");
+	                } else {
+	                    // Si hay una conexión directa, se imprime la distancia
+	                    System.out.print(distancias[i][j] + "\t");
+	                }
+	            }
+	            System.out.println();
+	        }
+	        System.out.print("Resultados con el tiempo\n");
+	        // Imprimir los resultados
+	        for (int i = 0; i < numVertices; i++) {
+	            for (int j = 0; j < numVertices; j++) {
+	                // Si la distancia es Integer.MAX_VALUE, significa que no hay conexión directa
+	                if (distanciasTiempo[i][j] == Integer.MAX_VALUE) {
+	                    // En este caso, se imprime "INF" para indicar que no hay conexión directa
+	                    System.out.print("INF\t");
+	                } else {
+	                    // Si hay una conexión directa, se imprime la distancia
+	                    System.out.print(distanciasTiempo[i][j] + "\t");
+	                }
+	            }
+	            System.out.println();
+	        }
+	    }
+	
 }
