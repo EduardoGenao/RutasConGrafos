@@ -602,7 +602,8 @@ public class GrafoFunciones {
             //Mientras la cuenta de aristas sea menor a la cantidad de vertices - 1
             while (cuentAristas < numVertices - 1) {
             	//La proxima arista es la arista señalada por el indice, el valor del indice luego aumenta en 1
-                int[] nodos = buscartiempo(tiempos[index++], numVertices);
+                int[] nodos = new int [numVertices];
+                nodos =buscartiempo(tiempos[index++], numVertices);
                 //La fuente del padre es el resultado de la funcion find con el arreglo de padres y el nodo de origen de la proxima arista
                 int sourceParent = buscarArista(padres, nodos[0]);
                 //Lo mismo pero ahora con el nodo de destino de la proxima arista
