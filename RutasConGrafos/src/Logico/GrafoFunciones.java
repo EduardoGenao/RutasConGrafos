@@ -32,38 +32,55 @@ public class GrafoFunciones {
 			GrafoFunciones.ubicaciones = ubicaciones;
 		}
 
+		public static boolean dataDumping(){
+	    	boolean used = false;
+	    	int[] pesos, tiempos;
+	    	Scanner scanner = new Scanner(System.in);
+	    	System.out.print("¿Desea hacer uso del dataDumping? 1=Si 2=NO");
+	    	int resp = scanner.nextInt();
+	    	if(resp == 1)
+	    		used = true;
+	    	return used;
+	    }
+		
+		public void dumpingAristas() {
+			int[] pesos = {69, 0, 0, 4, 69, 0, 43, 0, 78, 25, 0, 0, 2, 0, 64, 0, 0, 92, 0, 6, 59, 15, 0, 19, 71, 82, 59, 34};
+			int[] tiempos = {71, 0, 0, 9, 41, 0, 38, 0, 16, 54, 0, 0, 85, 0, 65, 0, 0, 52, 0, 15, 35, 100, 0, 67, 91, 81, 25, 53};
+			int index = 0;
+			for(int i = 0; i < ubicaciones.size(); i++) {
+				for(int j = i+1; j < ubicaciones.size(); j++) {
+					grafoMatriz.getPeso()[i][j] = pesos[index];
+					grafoMatriz.getPeso()[j][i] = pesos[index];
+					grafoMatriz.getTiempo()[i][j] = tiempos[index];
+					grafoMatriz.getTiempo()[j][i] = tiempos[index];
+					index++;
+				}
+			}
+		}
+		
 		// Sobrecarga del método agregarArista para aceptar caracteres
-	    public void agregarUbicacion(int numUbicaciones) {
+	    public void agregarUbicaciones(int numUbicaciones, boolean ddp) {
 		    Scanner scanner = new Scanner(System.in);
 		    int indice=0;
+		    String nombreUbicacion;
 		    for(int i=0; i<numUbicaciones;i++) {	
 		    	
 		    	if(!ubicaciones.isEmpty())
 		    		 indice = ubicaciones.size();
 		    	
-		    	
-		    	System.out.print("Nombre de la Ubicacion "+ (char)(i+65) + ": ");
-		    	String nombreUbicacion = scanner.nextLine(); // Leer el nombre de la ubicación desde la consola
-		    	if(nombreUbicacion.length() == 0) {
+		    	if(ddp == true)
 		    		nombreUbicacion = ("Ubicacion " + (char)(i+'A'));
-		    		System.out.println("La Ubicacion se va a llamar por defecto " + nombreUbicacion);
+		    	
+		    	else {
+		    		System.out.print("Nombre de la Ubicacion "+ (char)(i+65) + ": ");
+			    	nombreUbicacion = scanner.nextLine(); // Leer el nombre de la ubicación desde la consola
+			    	if(nombreUbicacion.length() == 0) {
+			    		nombreUbicacion = ("Ubicacion " + (char)(i+'A'));
+			    		System.out.println("La Ubicacion se va a llamar por defecto " + nombreUbicacion);
+			    	}
 		    	}
 		    	ubicaciones.add(indice, nombreUbicacion);
 	    	}
-	    	System.out.println("\nLista de Ubicaciones:");
-	        for (int i = 0; i < ubicaciones.size(); i++) {
-	            System.out.println((i+1) + ". " + ubicaciones.get(i));
-	        }
-	        // Convertir caracteres a índices numéricos (A->0, B->1, ...)
-	       
-
-	        // Agregar arista en ambos sentidos para un grafo no dirigido
-	       /* 
-	        *  int indiceOrigen = origen - 'A';
-	        * int indiceDestino = destino - 'A';
-	        * grafoMatriz[indiceOrigen][indiceDestino] = 1;
-	        * grafoMatriz[indiceDestino][indiceOrigen] = 1;
-	        */
 	        
 	    }
 	  
@@ -75,6 +92,10 @@ public class GrafoFunciones {
 		    	boolean replace = true;
 		    	Scanner scanner = new Scanner(System.in);
 		    	if(indice1 == -1) {
+		    		System.out.println("\nLista de Ubicaciones:");
+		    		for (int i = 0; i < ubicaciones.size(); i++) {
+		    			System.out.println((i+1) + ". " + ubicaciones.get(i));
+				    }
 		    		System.out.print("\nConeccion de Ubicaciones:\nDigite el numero en la lista de la primera ubicacion a conectar: ");
 			    	do {
 			    		indice1 = scanner.nextInt()-1;
@@ -159,7 +180,7 @@ public class GrafoFunciones {
 		    	
 			    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus conecciones"
 			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices\n5 = Encontrar ruta mas corta"
-			    		+ "\n6 = Encontrar la ruta de distancia/tiempo mas corta entre todos los nodos \n7 = Encontrar el camino más corto entre todas las ubicaciones\n" + 
+			    		+ "\n6 = Crear una ruta interconectada minima \n7 = Encontrar el camino más corto entre todas las ubicaciones\n" + 
 			    		"8 = Ruta Personalizada \n10 = Salir del programa");
 			    ans = scanner.nextInt();
 			    if(ans == 1)
