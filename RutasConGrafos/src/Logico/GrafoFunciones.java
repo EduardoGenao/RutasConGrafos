@@ -160,7 +160,7 @@ public class GrafoFunciones {
 			    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus conecciones"
 			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices\n5 = Encontrar ruta mas corta"
 			    		+ "\n6 = Encontrar la ruta de distancia/tiempo mas corta entre todos los nodos \n7 = Encontrar el camino más corto entre todas las ubicaciones\n" + 
-			    		"\n10 = Salir del programa");
+			    		"8 = Ruta Personalizada \n10 = Salir del programa");
 			    ans = scanner.nextInt();
 			    if(ans == 1)
 			    	this.agregarUbicacionExtra(ubicaciones.size());
@@ -176,6 +176,8 @@ public class GrafoFunciones {
 			    	this.primPeso(ubicaciones.size());
 			    if(ans == 7)
 			    	this.floydWarshall();
+			    if(ans == 8)
+			    	this.rutaPersonalizada();
 			    if(ans == 10) {
 			    	System.out.println("\n¡Gracias por usar este programa!");
 			    }
@@ -429,11 +431,12 @@ public class GrafoFunciones {
 	    	Scanner scanner = new Scanner(System.in);
 	    	System.out.print("Cuantas ubicaciones extra desea?");
 	    	int respuesta = scanner.nextInt();
+	    	String nombreUbicacion = "";
 	    	
     		for (int i = 0; i < respuesta; i++) {
     			
     			System.out.print("Nombre de la Ubicacion "+ (char)(i+65+numUbicaciones) + ": ");
-		    	String nombreUbicacion = scanner.nextLine(); // Leer el nombre de la ubicación desde la consola
+		    	nombreUbicacion = scanner.next(); // Leer el nombre de la ubicación desde la consola
 		    	if(nombreUbicacion.length() == 0) {
 		    		nombreUbicacion = ("Ubicacion " + (char)(i+'A'+numUbicaciones));
 		    		System.out.println("La Ubicacion se va a llamar por defecto " + nombreUbicacion);
@@ -885,6 +888,52 @@ public class GrafoFunciones {
 	            }
 	            System.out.println();
 	        }
+	    }
+	    public void rutaPersonalizada() {
+	    	int peso =0, tiempo = 0;
+	    	Scanner scanner = new Scanner(System.in);
+	    	System.out.println("\nLista de Ubicaciones:");
+	        for (int i = 0; i < ubicaciones.size(); i++) {
+	            System.out.println((i+1) + ". " + ubicaciones.get(i));
+	        }
+	    	System.out.print("Desde que ubicacion desea empezar?\n");
+	    	int inicio = scanner.nextInt() -1;
+	    	System.out.print("Cual es la ubicacion de destino?\n");
+	    	int destino = scanner.nextInt() -1;
+	    	int actual = inicio;
+	    	System.out.print("Las siguientes ubicaciones son las disponibles para avanzar en la ruta\n");
+	    	while(actual!=destino){
+	    		System.out.print("Ubicacion Actual: " + (actual+1)+"\n");
+	    		for (int i = 0; i < ubicaciones.size(); i++) {
+					if(grafoMatriz.getPeso()[actual][i]!=0) {
+						System.out.print((i+1)+" - "+ubicaciones.get(i)+" con un peso de "+grafoMatriz.getPeso()[actual][i]+
+								" y un tiempo de "+grafoMatriz.getTiempo()[actual][i]+"\n");
+					}
+				}
+	    		System.out.print("A que ubicacion desea ir? Coloque el indice: ");
+	    		int ruta = scanner.nextInt()-1;
+	    		boolean conectado = false;
+	    		while(conectado){
+	    			if(ruta>=ubicaciones.size()-1) {
+	    				System.out.print("Ingrese un destino existente: ");
+	    	    		ruta = scanner.nextInt()-1;
+	    			}
+		    		else {
+		    			if(grafoMatriz.getPeso()[actual][ruta]==0) {
+		    				System.out.print("Ingrese un destino conectado a su ubicaacion actual: ");
+		    	    		ruta = scanner.nextInt()-1;
+		    			}
+		    			else
+		    				conectado = true;
+		    		}
+	    		}
+	    		peso+= grafoMatriz.getPeso()[actual][ruta];
+	    		tiempo+= grafoMatriz.getTiempo()[actual][ruta];
+	    		
+	    		actual=ruta;
+	    	}
+	    	System.out.print("\nEl peso final fue de "+peso+" y el tiempo final fue de "+tiempo);
+	    	
 	    }
 	
 }
