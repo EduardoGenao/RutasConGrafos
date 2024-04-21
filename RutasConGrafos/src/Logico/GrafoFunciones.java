@@ -32,6 +32,8 @@ public class GrafoFunciones {
 			GrafoFunciones.ubicaciones = ubicaciones;
 		}
 
+		//boolean dataDumping, le pregunta al usuario si quiere usar el dataDumping y la respuesta la retorna en forma de boolean:
+		//true si la respuesta es si, false si la respuesta es no.
 		public static boolean dataDumping(){
 	    	boolean used = false;
 	    	int[] pesos, tiempos;
@@ -43,6 +45,7 @@ public class GrafoFunciones {
 	    	return used;
 	    }
 		
+		//void dumpingAristas, Inserta las aristas predeterminadas dentro de la matriz en caso de haberse usado el dataDumping.
 		public void dumpingAristas() {
 			int[] pesos = {69, 0, 0, 4, 69, 0, 43, 0, 78, 25, 0, 0, 2, 0, 64, 0, 0, 92, 0, 6, 59, 15, 0, 19, 71, 82, 59, 34};
 			int[] tiempos = {71, 0, 0, 9, 41, 0, 38, 0, 16, 54, 0, 0, 85, 0, 65, 0, 0, 52, 0, 15, 35, 100, 0, 67, 91, 81, 25, 53};
@@ -58,13 +61,17 @@ public class GrafoFunciones {
 			}
 		}
 		
-		// Sobrecarga del método agregarArista para aceptar caracteres
+		
+		//void agregarUbicaciones, se encarga de agregar las ubicaciones (nodos) dentro del arreglo de nombres, pero no dentro de la
+		//matriz (eso lo hace agregarAristas). numUbicaciones es la cantidad de ubicaciones que debe tener el arreglo y ddp es el
+		//boolean que indica si al datadumping se uso.
 	    public void agregarUbicaciones(int numUbicaciones, boolean ddp) {
 		    Scanner scanner = new Scanner(System.in);
 		    int indice=0;
 		    String nombreUbicacion;
 		    for(int i=0; i<numUbicaciones;i++) {	
 		    	
+		    	//Si el arreglo de ubicaciones no esta vacio, indice es el tamaño del arreglo.
 		    	if(!ubicaciones.isEmpty())
 		    		 indice = ubicaciones.size();
 		    	
@@ -84,19 +91,26 @@ public class GrafoFunciones {
 	        
 	    }
 	  
+	    //agregarArista, esta funcion se encarga de agregar las aristas a la matriz del grafo, tanto la de distancia como
+	    //la de tiempo. La funcion tiene dos formas de llamarse, desde el main al iniciar el programa, en cuyo caso el valor de indice1
+	    //es -1 (no existe) o luego de la funcion editarrutas, donde se enviara el valor del nodo de origen de la arista.
 	    public void agregarArista(int indice1) {
-	    	
+	    	//La variable respuesta se usa para ver si el usuario quiere seguir agregando aristas, 1 es si y 2 es no, pero antes de salir
+	    	//se revisa que todos los nodos esten conectados al grafo, y si no es así respuesta vuelve a 1. 3 es para indicar que la funcion
+	    	//se llamo del editor y por ende solo se esta agregando una arista.
 	    	int respuesta = 1;
 			do {
 		    	int indice2 = 0, peso = 0,tiempo = 0;
 		    	boolean replace = true;
 		    	Scanner scanner = new Scanner(System.in);
+		    	
+		    	//Si no se ha enviado un lugar del nodo de origen, se le pregunta aqui al usuario
 		    	if(indice1 == -1) {
 		    		System.out.println("\nLista de Ubicaciones:");
 		    		for (int i = 0; i < ubicaciones.size(); i++) {
 		    			System.out.println((i+1) + ". " + ubicaciones.get(i));
 				    }
-		    		System.out.print("\nConeccion de Ubicaciones:\nDigite el numero en la lista de la primera ubicacion a conectar: ");
+		    		System.out.print("\nruta de Ubicaciones:\nDigite el numero en la lista de la primera ubicacion a conectar: ");
 			    	do {
 			    		indice1 = scanner.nextInt()-1;
 						if(indice1 < 0 || indice1 >= ubicaciones.size())
@@ -104,14 +118,17 @@ public class GrafoFunciones {
 			    	} while(indice1 < 0 || indice1 >= ubicaciones.size());
 			    	
 		    	}
+		    	
+		    	//Si el lugar esta definido por el editor, se salta a preguntar directamente por el 2do nodo
 		    	else {
 		    		respuesta = 3;
-		    		System.out.println("\nAñadir otra coneccion a la Ubicacion " + ubicaciones.get(indice1));
+		    		System.out.println("\nAñadir otra ruta a la Ubicacion " + ubicaciones.get(indice1));
 		    		System.out.println("\nLista de Ubicaciones:");
 			        for (int i = 0; i < ubicaciones.size(); i++) {
 			            System.out.println((i+1) + ". " + ubicaciones.get(i));
 			        }
 		    	}
+		    	
 		    	System.out.print("Conectarla con (Digite otro numero de la lista): ");
 		    	do {
 		    		indice2 = scanner.nextInt()-1;
@@ -134,8 +151,9 @@ public class GrafoFunciones {
 		    			System.out.println("El tiempo no puede ser 0");
 		    	}
 		    	
+		    	//Si se va a poner una ruta en un lugar donde ya hay una, se pregunta si se quiere reemplazar la anterior.
 		    	if(grafoMatriz.getPeso()[indice1][indice2]!=0) {
-		    		System.out.println("Estas ubicaciones ya tienen una coneccion directa, ¿desea reemplazar"
+		    		System.out.println("Estas ubicaciones ya tienen una ruta directa, ¿desea reemplazar"
 		    				+ " los viejos valores por los nuevos? 1=Si 2=No");
 		    		if(scanner.nextInt() != 1)
 		    			replace = false ;
@@ -149,7 +167,7 @@ public class GrafoFunciones {
 		    		replace = true;
 		    		
 		    	if(respuesta != 3) {
-		    		System.out.println("\nDesea seguir agregando conecciones? 1= SI, 2=NO");
+		    		System.out.println("\nDesea seguir agregando rutas? 1= SI, 2=NO");
 		    		respuesta = scanner.nextInt();
 		    		int ceros=0;
 		    		if(respuesta==2) {
@@ -169,42 +187,14 @@ public class GrafoFunciones {
 		    	}
 		    	indice1 = -1;
 	    	}while(respuesta==1);
-			if(respuesta == 3)
+			
+			if(respuesta == 3) {
 				this.imprimirgrafoMatriz();
+				this.menuOpciones();
+			}
 	    }
 	    
-	    public void menuOpciones() {
-	    	int ans = 0;
-	    	do {
-		    	Scanner scanner = new Scanner(System.in); 
-		    	
-			    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus conecciones"
-			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices\n5 = Encontrar ruta mas corta"
-			    		+ "\n6 = Crear una ruta interconectada minima \n7 = Encontrar el camino más corto entre todas las ubicaciones\n" + 
-			    		"8 = Ruta Personalizada \n10 = Salir del programa");
-			    ans = scanner.nextInt();
-			    if(ans == 1)
-			    	this.agregarUbicacionExtra(ubicaciones.size());
-			    if(ans == 2)
-			    	this.editarUbicacion();
-			    if(ans == 3)
-			    	this.eliminarUbicacion();
-			    if(ans == 4)
-			    	this.imprimirgrafoMatriz();
-			    if(ans == 5)
-			    	this.dijkstra();
-			    if(ans == 6)
-			    	this.primPeso(ubicaciones.size());
-			    if(ans == 7)
-			    	this.floydWarshall();
-			    if(ans == 8)
-			    	this.rutaPersonalizada();
-			    if(ans == 10) {
-			    	System.out.println("\n¡Gracias por usar este programa!");
-			    }
-	    	}while(ans!=10);
-	    }
-	    
+	    //void imprimirgrafoMatriz, como dice su nombre se encarga de imprimir las matrices del grafo en su estado actual.
 	    public void imprimirgrafoMatriz() {
 	    	System.out.println("\nLa lista de ubicaciones quedo así (Peso)");
 	    	 // Imprimir la cabecera con las letras de los vértices
@@ -240,10 +230,53 @@ public class GrafoFunciones {
 	            }
 	            System.out.println();
 	        }
-	        this.menuOpciones();
 	    }
 	    
-	    private void editarUbicacion() {
+	    //void menuOpciones, la funcion que se encarga de interactuar con el usuario y preguntarle que va a querer hacer. esta funcion va a
+	    //ser llamada recurrentemente dentro del menu, hasta que el responda 9, que significa que quiere terminar.
+	    public void menuOpciones() {
+	    	int ans = 0;
+	    	do {
+		    	Scanner scanner = new Scanner(System.in); 
+		    	
+			    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus rutas"
+			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices\n5 = Encontrar ruta mas corta"
+			    		+ "\n6 = Crear una ruta interconectada minima \n7 = Encontrar el camino más corto entre todas las ubicaciones\n" + 
+			    		"8 = Ruta Personalizada \n9 = Salir del programa");
+			    ans = scanner.nextInt();
+			    if(ans == 1)
+			    	this.agregarUbicacionExtra(ubicaciones.size());
+			    if(ans == 2)
+			    	this.editarUbicacion();
+			    if(ans == 3)
+			    	this.eliminarUbicacion();
+			    if(ans == 4) {
+			    	this.imprimirgrafoMatriz();
+			    	this.menuOpciones();
+			    }
+			    if(ans == 5)
+			    	this.dijkstra();
+			    if(ans == 6)
+			    	this.primPeso(ubicaciones.size());
+			    if(ans == 7)
+			    	this.floydWarshall();
+			    if(ans == 8)
+			    	this.rutaPersonalizada();
+			    if(ans == 9) {
+			    	System.out.println("\n¡Gracias por usar este programa!");
+			    }
+	    	}while(ans!=9);
+	    }
+	    
+	    
+	    
+	    
+	   //--FUNCIONES PARA EDITAR UBICACIONES Y RUTAS
+	    
+	    //void editarUbicacion, este es el menu principal para editar las ubicacciones ya existentes. Se le pregunta al usuario cual
+	    //ubicacion quiere editar, y luego se le pregunta si quiere editar el nombre de la ubicacion, editar las aristas relaccionadas con
+	    //la ubicacion, o salir.
+	    public void editarUbicacion() {
 	    	Scanner scanner = new Scanner(System.in);
 	    	int ans = 0;
 	    	int ubicEdit = -1;
@@ -256,22 +289,23 @@ public class GrafoFunciones {
 	    		if(ubicEdit <= -1 || ubicEdit >= ubicaciones.size())
 	    			System.out.print("Ese numero no se encuentra en la lista, digite otro: ");
 	    	}while(ubicEdit <= -1 || ubicEdit > ubicaciones.size());
-	    	System.out.print("¿Que desea editar?: 1=Nombre 2=Conecciones 3=Cancelar   ");
+	    	System.out.print("¿Que desea editar?: 1=Nombre 2=rutas 3=Cancelar   ");
 	    	ans = scanner.nextInt();
 	    	if(ans == 1)
 	    		this.editarNombre(ubicEdit);
 	    	if(ans == 2)
-	    		this.editarConecciones(ubicEdit);
+	    		this.editarrutas(ubicEdit);
 	    	if(ans == 3)
 	    		this.menuOpciones();
 	    }
-	    
+	    //void editarNombre, cambia el nombre de la ubicacion enviada.
 	    private void editarNombre(int ubicEdit) {
 	    	String newNombre = "";
 	    	Scanner scanner = new Scanner(System.in);
 	    	System.out.print("El nombre actual es " + ubicaciones.get(ubicEdit) + ", Escriba el nombre nuevo para reemplazar: ");
 	    	while(newNombre.length() == 0) {
 	    		newNombre = scanner.nextLine();
+	    		//Si el usuario no escribe nada en el nombre, se le pregunta si quiere cancelar. Si no quiere, se vuelve a preguntar nombre
 	    		if(newNombre.length() == 0) {
 	    			System.out.print("No hay nombre, ¿desea Cancelar? 1=Si, 2=No");
 		    		if(scanner.nextInt()==1)
@@ -281,34 +315,44 @@ public class GrafoFunciones {
 	    		}
 	    	}
 	    	ubicaciones.set(ubicEdit, newNombre);
+	    	//Se imprime la lista de ubicaciones nueva y se vuelve al menu
 	    	System.out.println("\nLa Nueva lista de ubicaciones es la siguiente:");
 	    	for (int i = 0; i < ubicaciones.size(); i++)
 	            System.out.println((i+1) + ". " + ubicaciones.get(i));
 	    	this.menuOpciones();
 	    }
 	    
-	    private void editarConecciones(int ubicEdit) {
+	    //void editarConnecciones, se encarga de editar las aristas relaccionadas con la ubicaccion enviada. Se muestran las aristas en forma
+	    //de lista para que el usuario escoja una, y luego puede decidir si cambiar el peso y el tiempo, no hacer nada, eliminar la arista o
+	    //agregar otra arista extra.
+	    private void editarrutas(int ubicEdit) {
 	    	int resp = 0, ans = 0, newWeight = 0, newTime = 0;
 	    	Scanner scanner = new Scanner(System.in);
-	    	System.out.println("\nLas conecciones que contienen a " + ubicaciones.get(ubicEdit) + " son las siguientes:");
+	    	//Se imprimen la lista de rutas relaccionadas.
+	    	System.out.println("\nLas rutas que contienen a " + ubicaciones.get(ubicEdit) + " son las siguientes:");
 	    	for(int i = 0; i < grafoMatriz.getPeso()[ubicEdit].length; i++) {
 	    		if(grafoMatriz.getPeso()[ubicEdit][i] != 0) {
 	    			System.out.println("Posicion " + (i+1) + ": De " + (ubicaciones.get(ubicEdit)) + " a " + ubicaciones.get(i) + ". Peso: "
 	    					+ (grafoMatriz.getPeso()[ubicEdit][i]) + " Tiempo: " + (grafoMatriz.getTiempo()[ubicEdit][i]));
 	    		}
 	    	}
-	    	System.out.print("Digite el numero de la coneccion a editar (0=Agregar): ");
+	    	//Se pregunta cual de todas se quiere editar
+	    	System.out.print("Digite el numero de la ruta a editar (0=Agregar): ");
 	    	do{
 	    		resp = scanner.nextInt()-1;
 	    		if(resp > -1 && grafoMatriz.getPeso()[ubicEdit][resp] == 0)
 	    			System.out.print("Ese numero no se encuentra en la lista, digite otro: ");
 	    	}while(resp > -1 && grafoMatriz.getPeso()[ubicEdit][resp] == 0);
 	    	
+	    	//el usuario quiere agregar una arista
 	    	if(resp == -1)
+	    		//Se invoca la funcion agregar arista con la ubicacion del nodo de origen de la arista a agregar
 	    		this.agregarArista(ubicEdit);
 	    	else {
-	    		System.out.print("\n¿Quiere cambiar el peso y el tiempo?  1=Si 2=Cancelar 3=Eliminar Coneccion");
+	    		System.out.print("\n¿Quiere cambiar el peso y el tiempo?  1=Si 2=Cancelar 3=Eliminar ruta");
 	    		ans = scanner.nextInt();
+	    		
+	    		//el usuario quiere cambiar los valores de la arista
 	    		if(ans == 1) {
 	    			System.out.print("Diga el nuevo peso: ");
 	    			newWeight = scanner.nextInt();
@@ -330,11 +374,13 @@ public class GrafoFunciones {
 	    			}
 	    			this.menuOpciones();
 	    		}
+	    		//El usuario quiere cancelar
 	    		if(ans == 2) {
 	    			this.menuOpciones();
 	    		}
+	    		//El usuario desea eliminar la arista
 	    		if(ans == 3) {
-	    			System.out.print("¿Seguro que quiere eliminar esta coneccion? 1=Si 2=No");
+	    			System.out.print("¿Seguro que quiere eliminar esta ruta? 1=Si 2=No");
 	    			ans = scanner.nextInt();
 	    			if(ans == 1) {
 	    				boolean getcut = false;
@@ -355,7 +401,7 @@ public class GrafoFunciones {
 	    				if(ceros>=ubicaciones.size()-1)
 	    					getcut = true;
 	    				if(getcut == true)
-	    					System.out.println("La coneccion no se puede eliminar porque una o ambas ubicaciones quedarian aisladas");
+	    					System.out.println("La ruta no se puede eliminar porque una o ambas ubicaciones quedarian aisladas");
 	    				else {
 	    					grafoMatriz.getPeso()[ubicEdit][resp]=0;
 					    	grafoMatriz.getPeso()[resp][ubicEdit]=0;
@@ -371,6 +417,11 @@ public class GrafoFunciones {
 	    	}
 	    		
 	    }
+	    
+	    
+	    
+	    
+	    //--FUNCIONES PARA AGREGAR ELIMINAR UBICACIONES
 	    
 	    public void eliminarUbicacion() {
 	        Scanner scanner = new Scanner(System.in);
@@ -489,7 +540,7 @@ public class GrafoFunciones {
 		    	boolean replace = true;
 		    	Scanner scanner = new Scanner(System.in);
 		    	if(indice1 == -1) {
-		    		System.out.print("\nConeccion de Ubicaciones:\nDigite el numero en la lista de la primera ubicacion a conectar: ");
+		    		System.out.print("\nruta de Ubicaciones:\nDigite el numero en la lista de la primera ubicacion a conectar: ");
 			    	do {
 			    		indice1 = scanner.nextInt()-1;
 						if(indice1 < 0 || indice1 >= ubicaciones.size())
@@ -499,7 +550,7 @@ public class GrafoFunciones {
 		    	}
 		    	else {
 		    		respuesta = 3;
-		    		System.out.println("\nAñadir otra coneccion a la Ubicacion " + ubicaciones.get(indice1));
+		    		System.out.println("\nAñadir otra ruta a la Ubicacion " + ubicaciones.get(indice1));
 		    		System.out.println("\nLista de Ubicaciones:");
 			        for (int i = 0; i < ubicaciones.size(); i++) {
 			            System.out.println((i+1) + ". " + ubicaciones.get(i));
@@ -528,7 +579,7 @@ public class GrafoFunciones {
 		    	}
 		    	
 		    	if(grafoMatriz.getPeso()[indice1][indice2]!=0) {
-		    		System.out.println("Estas ubicaciones ya tienen una coneccion directa, ¿desea reemplazar"
+		    		System.out.println("Estas ubicaciones ya tienen una ruta directa, ¿desea reemplazar"
 		    				+ " los viejos valores por los nuevos? 1=Si 2=No");
 		    		if(scanner.nextInt() != 1)
 		    			replace = false ;
@@ -542,7 +593,7 @@ public class GrafoFunciones {
 		    		replace = true;
 		    		
 		    	if(respuesta != 3) {
-		    		System.out.println("\nDesea seguir agregando conecciones? 1= SI, 2=NO");
+		    		System.out.println("\nDesea seguir agregando rutas? 1= SI, 2=NO");
 		    		respuesta = scanner.nextInt();
 		    		int ceros=0;
 		    		if(respuesta==2) {
@@ -565,40 +616,88 @@ public class GrafoFunciones {
 			
 	    }
 	    
+	    
+	    //--FUNCIONES PARA EL ALGORITMO DE PRIM--
+	    
+	    
+	    //void primPeso, implementa el algoritmo de prim con el peso para encontrar el arbol de expansion minima.
 	    private void primPeso(int numVertices) {
 	    	//Se crea un array boolean para verificar que cada ubicacion este en el arbol, se rellena con falsos.
 	    	boolean[] dentroPrim = new boolean[numVertices];
             Arrays.fill(dentroPrim, false);
-            boolean pesoTiempo = false;
 
-            //Se crea una llave para 
+            //Se crea un array de llaves para ver el orden de cada nodo, se rellena con el valor maximo
             int[] llave = new int[numVertices];
             Arrays.fill(llave, Integer.MAX_VALUE);
-
+            //La llave del prime nodo se pone en 0
             llave[0] = 0;
+            
+            //Se crea un arreglo para indicar los padres de cada nodo
             int[] padres = new int[numVertices];
+            //El padre del primer nodo es -1 (no existe)
             padres[0] = -1;
 
+            //for que sigue hasta que count llegue a todos los vertices - 1
             for (int count = 0; count < numVertices - 1; count++) {
+            	//u = la ubicacion de la llave minima que no este dentro del arbol en el arreglo de llaves
                 int u = minLlave(llave, dentroPrim, numVertices);
+                //Se marca la ubicacion de la llave dentro del arbol
                 dentroPrim[u] = true;
 
-                for (int i = 0; i < ubicaciones.size(); i++) {	
+                //for que recorre todas las ubicaciones y verifica si tienen aristas con u
+                for (int i = 0; i < numVertices; i++) {
+                	//Se adquiere el peso de la arista
                     int peso = grafoMatriz.getPeso()[u][i];
+                    //Si el peso es diferente de 0 y menor que la llave del nodo de destino y dicho nodo no esta en el arbol
                     if (!dentroPrim[i] && (peso != 0 && peso < llave[i])) {
+                    	//El padre del nodo de destino es u
                         padres[i] = u;
+                        //La llave del nodo de destino se convierte en su peso
                         llave[i] = peso;
                     }
                 }
             }
-	    	this.printPrim(padres, numVertices, pesoTiempo);
+            //Se imprime el arbol
+            System.out.println("\nLa interruta mas corta en cuanto a distancia es:");
+	        for (int i = 1; i < numVertices; i++) {
+	            System.out.println(ubicaciones.get(padres[i]) + " - " + ubicaciones.get(i) + "        "
+	            + grafoMatriz.getPeso()[padres[i]][i] + " kilómetros");
+	        }
+	        //Se llama al algoritmo de kruskal para el tiempo
 	    	this.kruskalTiempo(numVertices);
 	    }
 	    
+	    //int minLlave, se encarga de encontrar la llave con el valor minimo que no este dentro del arbol en el arreglo llaves y retorna su
+	    //lugar en el arreglo
+	    private int minLlave(int[] llave, boolean[] dentroPrim, int numVertices) {
+	    	//min inicia como el numero maximo
+            int min = Integer.MAX_VALUE;
+          //El lugar del minimo, inicialmente no existe
+            int minIndex = -1;
+
+          //for que chequea todos los vertices
+            for (int v = 0; v < numVertices; v++) {
+            	//Si (el vertice seleccionado) esta fuera del arbol de prim y la llave del vertice es menor que el minimo
+                if (!dentroPrim[v] && llave[v] < min) {
+                	//El nuevo minimo es la llave de vertice seleccionado
+                    min = llave[v];
+                  //El lugar del minimo es el lugar del vertice.
+                    minIndex = v;
+                }
+            }
+            //Se devuelve el lugar del minimo
+            return minIndex;
+	    }
+	    
+	    
+	    
+	    //--FUNCIONES PARA EL ALGORITMO DE KRUSKAL
+	    
+	    //void kruskalTiempo, se encarga de crear un arbol de expansion minima con los valores de tiempo
 	    private void kruskalTiempo(int numVertices) {
 	    	//Se crea una lista de aristas que representa el arbol
 	    	int[][] dentroKruskal = new int[numVertices-1][2];
-            // Sort edges by weight
+            // Se buscan todos los tiempos existentes en la matriz y se ordenan por su valor
 	    	int cantTiempos = 0;
             int[] tiempos = new int [numVertices*numVertices];
             for(int i = 0; i < numVertices; i++) {
@@ -641,7 +740,8 @@ public class GrafoFunciones {
                 }
             }
 
-            System.out.println("\nEn cuanto a tiempo, la interconeccion mas corta es:");
+            //Se imprime el algoritmo
+            System.out.println("\nEn cuanto a tiempo, la interruta mas corta es:");
             for (int i = 0; i < numVertices-1; i++) {
                 System.out.println(ubicaciones.get(dentroKruskal[i][0]) + " - " + ubicaciones.get(dentroKruskal[i][1]) 
                 + "        " + grafoMatriz.getTiempo()[dentroKruskal[i][0]][dentroKruskal[i][1]] + " segundos");
@@ -650,6 +750,8 @@ public class GrafoFunciones {
             this.menuOpciones();
         }
 	    
+	    //int buscartiempo. El objetivo de esta funcion es buscar la posicion del tiempo emviado en la matriz de tiempos, y retorna dichos
+	    //valores en un arreglo de dos posiciones
 	    private int[] buscartiempo(int tiempo, int numVertices) {
 	    	int[] nodos = new int[2];
 	    	for(int i = 0; i < numVertices; i++) {
@@ -663,6 +765,8 @@ public class GrafoFunciones {
 	    	return nodos;
 	    }
 
+	    //int buscarArista, se encarga de buscar el padre del vertice (nodo) enviado dentro del arreglo padre. Es una funcion recursiva que
+	    //sigue llamandose hasta que se encuentre un nodo cuyo padre es el mismo.
         private int buscarArista(int[] parent, int vertex) {
         	//Si el padre del nodo de origen/destino de la proxima arista no es ese mismo nodo
             if (parent[vertex] != vertex)
@@ -672,7 +776,7 @@ public class GrafoFunciones {
             return parent[vertex];
         }
 
-        
+        //void union, se encarga de unir el padre del nodo inicial con el padre del nodo de destino
         private void union(int[] parent, int x, int y) {
         	//xSet = el padre de x
             int xSet = buscarArista(parent, x);
@@ -683,42 +787,7 @@ public class GrafoFunciones {
 
         }
 	    
-	    private int minLlave(int[] llave, boolean[] dentroPrim, int numVertices) {
-	    	//min inicia como el numero maximo
-            int min = Integer.MAX_VALUE;
-          //El lugar del minimo, inicialmente no existe
-            int minIndex = -1;
-
-          //for que chequea todos los vertices
-            for (int v = 0; v < numVertices; v++) {
-            	//Si (el vertice seleccionado) esta fuera del arbol de prim y la llave del vertice es menor que el minimo
-                if (!dentroPrim[v] && llave[v] < min) {
-                	//El nuevo minimo es la llave de vertice seleccionado
-                    min = llave[v];
-                  //El lugar del minimo es el lugar del vertice.
-                    minIndex = v;
-                }
-            }
-            //Se devuelve el lugar del minimo
-            return minIndex;
-	    }
 	    
-	    private void printPrim (int[] padres, int numVertices, boolean pesoTiempo) {
-	    	if(pesoTiempo == false) {
-	    		System.out.println("\nLa interconeccion mas corta en cuanto a distancia es:");
-	            for (int i = 1; i < numVertices; i++) {
-	                System.out.println(ubicaciones.get(padres[i]) + " - " + ubicaciones.get(i) + "        "
-	                	+ grafoMatriz.getPeso()[padres[i]][i] + " kilómetros");
-	            }
-	    	}
-	    	else {
-	    		System.out.println("\nLa interconeccion mas corta en cuanto a distancia es:");
-	            for (int i = 1; i < numVertices; i++) {
-	                System.out.println(ubicaciones.get(padres[i]) + " - " + ubicaciones.get(i) + "        "
-	                	+ grafoMatriz.getTiempo()[padres[i]][i] + " minutos");
-	            }
-	    	}
-	    }
 	    
 	    public void dijkstra() {
 	    	
