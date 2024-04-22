@@ -844,16 +844,17 @@ public class GrafoFunciones {
 	        System.out.println("Grafo combinado de peso y tiempo\n");
 	        System.out.print("  ");
 	        for (int i = 0; i < ubicaciones.size(); i++) {
-	            System.out.print((char) ('A' + i) + " ");
+	        	System.out.print(String.format("%3c ", ('A' + i)));
 	        }
 	        System.out.println();
 	        
 	        // Imprimir la grafocombinado con las letras de los vértices como índice
 	        for (int i = 0; i < ubicaciones.size(); i++) {
 	            // Imprimir la letra del vértice al inicio de cada fila
-	            System.out.print((char) ('A' + i) + " ");
+	        	System.out.print((char) ('A' + i) + " ");
 	            for (int j = 0; j < ubicaciones.size(); j++) {
-	                System.out.print(grafoCombinado[i][j] + " ");
+	            	
+	                System.out.print(String.format("%3d " ,grafoCombinado[i][j]));
 	            }
 	            System.out.println();
 	        }
@@ -973,7 +974,7 @@ public class GrafoFunciones {
 	        }
 	        System.out.println();
 	        for (int i = 0; i < numVertices; i++) {
-	        	System.out.print((char) ('A' + i) + " ");
+	        	System.out.print((char)('A' + i) + ' ');
 	            for (int j = 0; j < numVertices; j++) {
 	                // Si la distancia es Integer.MAX_VALUE, significa que no hay conexión directa
 	                if (distanciasTiempo[i][j] == Integer.MAX_VALUE) {
