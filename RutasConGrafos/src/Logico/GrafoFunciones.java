@@ -86,6 +86,7 @@ public class GrafoFunciones {
 			    		System.out.println("La Ubicacion se va a llamar por defecto " + nombreUbicacion);
 			    	}
 		    	}
+		    	//agregar ubicacion al arrayList
 		    	ubicaciones.add(indice, nombreUbicacion);
 	    	}
 	        
@@ -128,12 +129,14 @@ public class GrafoFunciones {
 			            System.out.println((i+1) + ". " + ubicaciones.get(i));
 			        }
 		    	}
-		    	
+		    	// el usuario digita la ubicacion a conectar
 		    	System.out.print("Conectarla con (Digite otro numero de la lista): ");
 		    	do {
 		    		indice2 = scanner.nextInt()-1;
+		    		//si no se encuentra debe digitar de nuevo
 					if(indice2 < 0 || indice2 == indice1 || indice2 >= ubicaciones.size())
 						System.out.print("Ubicacion no encontrada, digite otra vez: ");
+					// si es igual a la primera ubicacion asignada, no se puede conectar a si misma
 					if(indice2 == indice1)
 						System.out.print("No puedes conectar una ubicacion con si misma, digite otra vez:");
 		    	} while(indice2 < 0 || indice2 == indice1 || indice2 >= ubicaciones.size());
@@ -165,7 +168,7 @@ public class GrafoFunciones {
 				    	grafoMatriz.getTiempo()[indice2][indice1]=tiempo;
 		    		}
 		    		replace = true;
-		    		
+		    		// si pone un numero que no sea o 2, que siga preguntando que desea hacer
 		    	if(respuesta != 3) {
 		    		System.out.println("\nDesea seguir agregando rutas? 1= SI, 2=NO");
 		    		respuesta = scanner.nextInt();
@@ -236,6 +239,7 @@ public class GrafoFunciones {
 	    //ser llamada recurrentemente dentro del menu, hasta que el responda 9, que significa que quiere terminar.
 	    public void menuOpciones() {
 	    	int ans = 0;
+	    	//menu para que el usuario ingrese el numero del apartado lo que desea hacer
 	    	do {
 		    	Scanner scanner = new Scanner(System.in); 
 		    	
@@ -428,14 +432,16 @@ public class GrafoFunciones {
 	     *  completamente, te pide insertar conexiones hasta que lo este. */
 	    public void eliminarUbicacion() {
 	        Scanner scanner = new Scanner(System.in);
+	        // se imprime la lista de ubicaciones
 	        System.out.println("\nLista de Ubicaciones:");
 	        for (int i = 0; i < ubicaciones.size(); i++) {
 	            System.out.println((i + 1) + ". " + ubicaciones.get(i));
 	        }
+	        //se digita el numero de la ubicacion a eliminar
 	        int resp = 0;
 	        System.out.print("Digite el numero de la ubicacion a eliminar: ");
 	        resp = scanner.nextInt();
-
+	        // advertencia que al eliminar la ubicacion se eliminaran sus aristas
 	        System.out.print("Al eliminar " + ubicaciones.get(resp - 1) +
 	                ", se eliminaran las conexiones que conectan con:\n");
 	        for (int i = 0; i < ubicaciones.size(); i++) {
@@ -457,6 +463,7 @@ public class GrafoFunciones {
 	            // Ajustar el tamaño de la matriz
 	            ajustarMatriz(resp - 1);
 	            int ceros;
+	            // verificaf que todo el grafo esta unido
 	            for (int i = 0; i < grafoMatriz.getPeso().length; i++) {
     				ceros=0;
     				for (int j = 0; j < grafoMatriz.getPeso().length; j++) {
@@ -464,6 +471,7 @@ public class GrafoFunciones {
 						ceros++;
     					}
     				}
+    				//si hay una ubicacion sin aristas, se deben de ingresar aristas para que se pueda continuar
     				if(ceros==ubicaciones.size()) {
     					
     					System.out.println("Al eliminar la ubicacion seleccionada, hay ubicaciones que no estan conectadas, conéctelas todas");
@@ -484,11 +492,11 @@ public class GrafoFunciones {
 	     */
 	    public void ajustarMatriz(int indiceEliminar) {
 	        int nuevaDimension = grafoMatriz.getPeso().length - 1;
-
+	        // nueva matriz que se remplazara con la actual
 	        Arista nuevaMatriz = new Arista(nuevaDimension);
 	        
 
-	        // Copiar los elementos de la matriz original a la nueva matriz
+	        // Copiar los elementos de la matriz original a la nueva matriz, ignorando el indice a eliminar
 	        for (int i = 0, x = 0; i < grafoMatriz.getPeso().length; i++) {
 	            if (i != indiceEliminar) {
 	                for (int j = 0, y = 0; j < grafoMatriz.getPeso()[i].length; j++) {
@@ -513,10 +521,11 @@ public class GrafoFunciones {
 	     */
 	    public void agregarUbicacionExtra(int numUbicaciones) {
 	    	Scanner scanner = new Scanner(System.in);
+	    	//ubicaciones extra
 	    	System.out.print("Cuantas ubicaciones extra desea?");
 	    	int respuesta = scanner.nextInt();
 	    	String nombreUbicacion = "";
-	    	
+	    	//poner los datos de la nueva ubicacion
     		for (int i = 0; i < respuesta; i++) {
     			
     			System.out.print("Nombre de la Ubicacion "+ (char)(i+65+numUbicaciones) + ": ");
@@ -531,6 +540,7 @@ public class GrafoFunciones {
 	        for (int i = 0; i < ubicaciones.size(); i++) {
 	            System.out.println((i+1) + ". " + ubicaciones.get(i));
 	        }
+	        //se debe agregar aristas extra para que el grafo este conectado
 	        agregarAristaExtra(-1, numUbicaciones+respuesta);
 	        
 	    	
@@ -543,7 +553,9 @@ public class GrafoFunciones {
 	     *  ampliada para poder presentarla como el grafo
 	     */
 	    public void agregarAristaExtra(int indice1, int numUbicaciones) {
+	    	//se crea la nueva matriz a remplazar
 	    	Arista nueva = new Arista(numUbicaciones);
+	    	//se copian los datos de la matriz antigua a la nueva
 	    	for (int i = 0; i < grafoMatriz.getPeso().length; i++) {
 	            for (int j = 0; j < grafoMatriz.getPeso()[i].length; j++) {
 	                nueva.getPeso()[i][j] = grafoMatriz.getPeso()[i][j];
@@ -551,86 +563,8 @@ public class GrafoFunciones {
 	            }
 	        }
 	    	GrafoFunciones.setGrafoMatriz(nueva);
-	    	
-	    	int respuesta = 1;
-			do {
-		    	int indice2 = 0, peso = 0,tiempo = 0;
-		    	boolean replace = true;
-		    	Scanner scanner = new Scanner(System.in);
-		    	if(indice1 == -1) {
-		    		System.out.print("\nruta de Ubicaciones:\nDigite el numero en la lista de la primera ubicacion a conectar: ");
-			    	do {
-			    		indice1 = scanner.nextInt()-1;
-						if(indice1 < 0 || indice1 >= ubicaciones.size())
-							System.out.print("Ubicacion no encontrada, digite otra vez: ");
-			    	} while(indice1 < 0 || indice1 >= ubicaciones.size());
-			    	
-		    	}
-		    	else {
-		    		respuesta = 3;
-		    		System.out.println("\nAñadir otra ruta a la Ubicacion " + ubicaciones.get(indice1));
-		    		System.out.println("\nLista de Ubicaciones:");
-			        for (int i = 0; i < ubicaciones.size(); i++) {
-			            System.out.println((i+1) + ". " + ubicaciones.get(i));
-			        }
-		    	}
-		    	System.out.print("Conectarla con (Digite otro numero de la lista): ");
-		    	do {
-		    		indice2 = scanner.nextInt()-1;
-					if(indice2 < 0 || indice2 == indice1 || indice2 >= ubicaciones.size())
-						System.out.print("Ubicacion no encontrada, digite otra vez: ");
-					if(indice2 == indice1)
-						System.out.print("No puedes conectar una ubicacion con si misma, digite otra vez:");
-		    	} while(indice2 < 0 || indice2 == indice1 || indice2 >= ubicaciones.size());
-		    	peso = 0;
-		    	while(peso == 0) {
-		    		System.out.print("¿Cual es la distancia entre estas dos ubicaciones (en km)?: ");
-		    		peso = scanner.nextInt();
-		    		if(peso == 0)
-		    			System.out.println("La distancia no puede ser 0");
-		    	}
-		    	while(tiempo == 0) {
-		    		System.out.print("¿Cual es el tiempo entre estas dos ubicaciones (en minutos)?: ");
-		    		tiempo = scanner.nextInt();
-		    		if(tiempo == 0)
-		    			System.out.println("El tiempo no puede ser 0");
-		    	}
-		    	
-		    	if(grafoMatriz.getPeso()[indice1][indice2]!=0) {
-		    		System.out.println("Estas ubicaciones ya tienen una ruta directa, ¿desea reemplazar"
-		    				+ " los viejos valores por los nuevos? 1=Si 2=No");
-		    		if(scanner.nextInt() != 1)
-		    			replace = false ;
-		    	}
-		    		if(replace == true) {
-		    			grafoMatriz.getPeso()[indice1][indice2]=peso;
-				    	grafoMatriz.getPeso()[indice2][indice1]=peso;
-				    	grafoMatriz.getTiempo()[indice1][indice2]=tiempo;
-				    	grafoMatriz.getTiempo()[indice2][indice1]=tiempo;
-		    		}
-		    		replace = true;
-		    		
-		    	if(respuesta != 3) {
-		    		System.out.println("\nDesea seguir agregando rutas? 1= SI, 2=NO");
-		    		respuesta = scanner.nextInt();
-		    		int ceros=0;
-		    		if(respuesta==2) {
-		    			for (int i = 0; i < grafoMatriz.getPeso().length; i++) {
-		    				ceros=0;
-		    				for (int j = 0; j < grafoMatriz.getPeso().length; j++) {
-		    					if(grafoMatriz.getPeso()[i][j]==0) {
-								ceros++;
-		    					}
-		    				}
-		    				if(ceros==ubicaciones.size()) {
-		    					System.out.println("Hay ubicaciones que no estan conectadas, conéctelas todas");
-		    					respuesta=1;
-		    				}
-		    			}
-		    		}
-		    	}
-		    	indice1 = -1;
-	    	}while(respuesta==1);
+	    	//agregar nuevas aristas
+	    	agregarArista(-1);
 			
 	    }
 	    
@@ -815,16 +749,19 @@ public class GrafoFunciones {
 	    	
 	    	int inicio = 0, fin = 0;
 	    	Scanner scanner = new Scanner(System.in);
+	    	//imprime la lista de ubicaciones
 	    	System.out.println("\nLista de Ubicaciones:");
 	        for (int i = 0; i < ubicaciones.size(); i++) {
 	            System.out.println((i+1) + ". " + ubicaciones.get(i));
 	        }
+	        //el usuario coloca los indices de las ubicaciones que sea calcular la ruta
 	    	System.out.print("Indique el numero de la ubicacion en la que quiere iniciar: ");
 	    	inicio= scanner.nextInt();
 	    	inicio-=1;
 	    	System.out.print("Indique el numero de la ubicacion en la que quiere terminar: ");
 	    	fin= scanner.nextInt();
 	    	fin-=1;
+	    	// nombrar varaiables y arreglos para almacenar los visitados y las distancias
 	        int numVertices = ubicaciones.size();
 	        int[] distancias = new int[numVertices];
 	        boolean[] visitado = new boolean[numVertices];
@@ -834,7 +771,7 @@ public class GrafoFunciones {
 	        boolean[] visitadoTiempo = new boolean[numVertices];
 	        
 	        int[][] grafoCombinado = new int[numVertices][numVertices];
-	        
+	        // creacion del grafo combinado
 	        for (int i = 0; i < numVertices; i++) {
 				for (int j = 0; j < numVertices; j++) {
 					grafoCombinado[i][j]=grafoMatriz.getPeso()[i][j]+grafoMatriz.getTiempo()[i][j];
@@ -868,25 +805,32 @@ public class GrafoFunciones {
 
 	            //actualiar distancia de vertices adyacentes
 	            for (int v = 0; v < numVertices; v++) {
+	            	//si la ubicacion no ha sido visitada y la posicion en el grafo es diferente de cero,
+	            	//es decir que tiene una arista y ademas  si la distancia desde el nodo de inicio hasta 
+	            	//  el nodo v a través del nodo actual u es menor que la distancia actualmente conocida
+	            	//desde el inicio hasta v, entones actualiza la distancia conocida desde el inicio hasta el nodo v con la nueva distancia calculada 
 	                if (!visitado[v] && grafoCombinado[u][v] != 0 &&
 	                        distancias[u] != Integer.MAX_VALUE &&
 	                        distancias[u] + grafoCombinado[u][v] < distancias[v]) {
+	                	
 	                    distancias[v] = distancias[u] + grafoCombinado[u][v];
 	                }
 	                if (!visitadoPeso[v] && grafoMatriz.getPeso()[u][v] != 0 &&
 	                        distanciasPeso[u] != Integer.MAX_VALUE &&
 	                        distanciasPeso[u] + grafoMatriz.getPeso()[u][v] < distanciasPeso[v]) {
+	                	
 	                    distanciasPeso[v] = distanciasPeso[u] + grafoMatriz.getPeso()[u][v];
 	                }
 	                if (!visitadoTiempo[v] && grafoMatriz.getTiempo()[u][v] != 0 &&
 	                        distanciasTiempo[u] != Integer.MAX_VALUE &&
 	                        distanciasTiempo[u] + grafoMatriz.getTiempo()[u][v] < distanciasTiempo[v]) {
+	                	
 	                    distanciasTiempo[v] = distanciasTiempo[u] + grafoMatriz.getTiempo()[u][v];
 	                }
 	            }
 	        }
 
-	        // Print la distancia mas corta
+	        // Print la distancia mas corta en tiempo, peso y combinado
 	        System.out.println("La distancia mas corta combinando el tiempo y la distancia entre " + ubicaciones.get(inicio) +
 	                " y " + ubicaciones.get(fin) + " es: " + distancias[fin]);
 	        System.out.println("La distancia mas corta teniendo en cuenta el tiempoc entre " + ubicaciones.get(inicio) +
@@ -909,6 +853,7 @@ public class GrafoFunciones {
 	            }
 	            System.out.println();
 	        }
+	        // imprime grafos de tiempo y peso
 	        imprimirgrafoMatriz();
 	    }
 	    /*
@@ -920,7 +865,7 @@ public class GrafoFunciones {
 	        int min = Integer.MAX_VALUE;
 	        int minIndex = -1;
 	        int numVertices = distancias.length;
-
+	        //for para tomar la distancia/tiempo minimo
 	        for (int v = 0; v < numVertices; v++) {
 	            if (!visitado[v] && distancias[v] <= min) {
 	                min = distancias[v];
@@ -940,6 +885,7 @@ public class GrafoFunciones {
 	    public void floydWarshall() {
 	    	
 	        int numVertices = ubicaciones.size();
+	        //bariasbles para peso y tiempo
 	        int[][] distancias = new int[numVertices][numVertices];
 	        int[][] camino = new int[numVertices][numVertices];
 	        int[][] distanciasTiempo = new int[numVertices][numVertices];
@@ -951,6 +897,7 @@ public class GrafoFunciones {
 	                distancias[i][j] = grafoMatriz.getPeso()[i][j];
 	                distanciasTiempo[i][j] = grafoMatriz.getTiempo()[i][j];
 	                if(grafoMatriz.getPeso()[i][j]==0 && i!=j) {
+	                	// asignar infinito a las ubicaciones que no estan conectadas directamente
 	                	distancias[i][j]=Integer.MAX_VALUE;
 	                	distanciasTiempo[i][j]=Integer.MAX_VALUE;
 	                }
@@ -969,9 +916,17 @@ public class GrafoFunciones {
 	        for (int k = 0; k < numVertices; k++) {
 	            for (int i = 0; i < numVertices; i++) {
 	                for (int j = 0; j < numVertices; j++) {
+	                	//Verifica si hay una conexión directa entre el nodo i y el nodo k y entre k y j
+	                	//Verifica si la suma de las distancias desde el nodo i hasta el nodo k y desde el nodo k 
+	                	//hasta el nodo j es menor que la distancia directa desde el nodo i hasta el nodo j.
+	                	//Si esta condición se cumple, significa que se ha encontrado una ruta más corta desde
+	                	//el nodo i hasta el nodo j pasando por el nodo k.
 	                    if (distancias[i][k] != Integer.MAX_VALUE && distancias[k][j] != Integer.MAX_VALUE && 
 	                        distancias[i][k] + distancias[k][j] < distancias[i][j]) {
+	                    	//se actualiza la distancia conocida por la nueva de ij pasando por k
 	                        distancias[i][j] = distancias[i][k] + distancias[k][j];
+	                        // Actualiza el camino más corto conocido desde el nodo i hasta el nodo j
+	                        //con el camino más corto conocido desde el nodo k hasta el nodo j
 	                        camino[i][j] = camino[k][j];
 	                    }
 	                    if (distanciasTiempo[i][k] != Integer.MAX_VALUE && distanciasTiempo[k][j] != Integer.MAX_VALUE && 
@@ -979,6 +934,7 @@ public class GrafoFunciones {
 		                        distanciasTiempo[i][j] = distanciasTiempo[i][k] + distanciasTiempo[k][j];
 		                        caminoTiempo[i][j] = caminoTiempo[k][j];
 		                    }
+	                    // compara la suma de distancias entre diferentes posiciones de la matriz para saber si estan indirectamente conectadas
 	                }
 	            }
 	        }
@@ -1039,11 +995,14 @@ public class GrafoFunciones {
 	        for (int i = 0; i < ubicaciones.size(); i++) {
 	            System.out.println((i+1) + ". " + ubicaciones.get(i));
 	        }
+	        // el usuario digita la ubicacion inicial y final
 	    	System.out.print("Desde que ubicacion desea empezar?\n");
 	    	int inicio = scanner.nextInt() -1;
 	    	System.out.print("Cual es la ubicacion de destino?\n");
 	    	int destino = scanner.nextInt() -1;
+	    	// inicialmente la actual debe ser el inicio
 	    	int actual = inicio;
+	    	//mostrar ubicaciones directamente conectadas para avanzar
 	    	System.out.print("Las siguientes ubicaciones son las disponibles para avanzar en la ruta\n");
 	    	while(actual!=destino){
 	    		System.out.print("Ubicacion Actual: " + (actual+1)+"\n");
@@ -1053,15 +1012,19 @@ public class GrafoFunciones {
 								" y un tiempo de "+grafoMatriz.getTiempo()[actual][i]+"\n");
 					}
 				}
+	    		// el usuario digita la ubicacion deseada
 	    		System.out.print("A que ubicacion desea ir? Coloque el indice: ");
 	    		int ruta = scanner.nextInt()-1;
 	    		boolean conectado = false;
-	    		while(conectado){
-	    			if(ruta>=ubicaciones.size()-1) {
+	    		// metodo para verificar que la ubicacion existe
+	    		while(!conectado){
+	    			// si el indice digitado es mayor que el numero total de ubicaciones, es porque la ubicacion no existe
+	    			if(ruta>=ubicaciones.size()) {
 	    				System.out.print("Ingrese un destino existente: ");
 	    	    		ruta = scanner.nextInt()-1;
 	    			}
 		    		else {
+		    			// si el peso en la el indice digitado por la ubicacion actual y la ruta significa quye estan conectados
 		    			if(grafoMatriz.getPeso()[actual][ruta]==0) {
 		    				System.out.print("Ingrese un destino conectado a su ubicaacion actual: ");
 		    	    		ruta = scanner.nextInt()-1;
@@ -1070,11 +1033,13 @@ public class GrafoFunciones {
 		    				conectado = true;
 		    		}
 	    		}
+	    		// suma de pesos y tiempo para presentarlos al final
 	    		peso+= grafoMatriz.getPeso()[actual][ruta];
 	    		tiempo+= grafoMatriz.getTiempo()[actual][ruta];
 	    		
 	    		actual=ruta;
 	    	}
+	    	// imprime resultados
 	    	System.out.print("\nEl peso final fue de "+peso+" y el tiempo final fue de "+tiempo);
 	    	
 	    }
