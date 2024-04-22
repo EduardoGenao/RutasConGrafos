@@ -38,7 +38,7 @@ public class GrafoFunciones {
 	    	boolean used = false;
 	    	int[] pesos, tiempos;
 	    	Scanner scanner = new Scanner(System.in);
-	    	System.out.print("¿Desea hacer uso del dataDumping? 1=Si 2=NO");
+	    	System.out.print("¿Desea hacer uso del dataDumping? 1=Si 2=NO\n");
 	    	int resp = scanner.nextInt();
 	    	if(resp == 1)
 	    		used = true;
@@ -200,7 +200,7 @@ public class GrafoFunciones {
 	    	 // Imprimir la cabecera con las letras de los vértices
 	        System.out.print("  ");
 	        for (int i = 0; i < ubicaciones.size(); i++) {
-	            System.out.print((char) ('A' + i) + " ");
+	        	System.out.print(String.format("%3c ",(char) ('A' + i)));
 	        }
 	        System.out.println();
 
@@ -209,7 +209,7 @@ public class GrafoFunciones {
 	            // Imprimir la letra del vértice al inicio de cada fila
 	            System.out.print((char) ('A' + i) + " ");
 	            for (int j = 0; j < ubicaciones.size(); j++) {
-	                System.out.print(grafoMatriz.getPeso()[i][j] + " ");
+	            	System.out.print(String.format("%3d ", grafoMatriz.getPeso()[i][j]));
 	            }
 	            System.out.println();
 	        }
@@ -217,7 +217,7 @@ public class GrafoFunciones {
 	    	 // Imprimir la cabecera con las letras de los vértices
 	        System.out.print("  ");
 	        for (int i = 0; i < ubicaciones.size(); i++) {
-	            System.out.print((char) ('A' + i) + " ");
+	            System.out.print(String.format("%3c ",(char) ('A' + i)));
 	        }
 	        System.out.println();
 
@@ -226,7 +226,7 @@ public class GrafoFunciones {
 	            // Imprimir la letra del vértice al inicio de cada fila
 	            System.out.print((char) ('A' + i) + " ");
 	            for (int j = 0; j < ubicaciones.size(); j++) {
-	                System.out.print(grafoMatriz.getTiempo()[i][j] + " ");
+	            	System.out.print(String.format("%3d ", grafoMatriz.getTiempo()[i][j]));
 	            }
 	            System.out.println();
 	        }
@@ -422,7 +422,10 @@ public class GrafoFunciones {
 	    
 	    
 	    //--FUNCIONES PARA AGREGAR ELIMINAR UBICACIONES
-	    
+	    /* eliminarUbicacion() esta funcion elimina una ubicacion deseada, primero
+	     *  pregunta al usuario el numero de la ubicacion y las conexiones que 
+	     *  tiene esta ubicacion, por lo que si el grafo no queda unido 
+	     *  completamente, te pide insertar conexiones hasta que lo este. */
 	    public void eliminarUbicacion() {
 	        Scanner scanner = new Scanner(System.in);
 	        System.out.println("\nLista de Ubicaciones:");
@@ -462,18 +465,23 @@ public class GrafoFunciones {
     					}
     				}
     				if(ceros==ubicaciones.size()) {
-    					System.out.println("Hay ubicaciones que no estan conectadas, conéctelas todas");
+    					
+    					System.out.println("Al eliminar la ubicacion seleccionada, hay ubicaciones que no estan conectadas, conéctelas todas");
     					System.out.println("\nLista de Ubicaciones:");
     			        for (int k = 0; k < ubicaciones.size(); k++) {
     			            System.out.println((k+1) + ". " + ubicaciones.get(k));
     			        }
     					this.agregarArista(-1);
+    					break;
     				}
     			}
 	        }
 	        
 	    }
-
+	    /*
+	     * void ajustarMatriz() esta funcion se usa en eliminar ubicacion y sirve para
+	     *  ajustar la matriz luego de haber eliminado la ubicacion y sus conexiones
+	     */
 	    public void ajustarMatriz(int indiceEliminar) {
 	        int nuevaDimension = grafoMatriz.getPeso().length - 1;
 
@@ -498,7 +506,11 @@ public class GrafoFunciones {
 	        grafoMatriz.setPeso(nuevaMatriz.getPeso());
 	        grafoMatriz.setTiempo(nuevaMatriz.getTiempo());
 	    }
-
+	    /*
+	     * void agregarUbicacionExtra(int numUbicaciones) 
+	     * esta funcion sirve para agregar ubicacion extra luego
+	     * de haber definido las ubicaciones iniciales
+	     */
 	    public void agregarUbicacionExtra(int numUbicaciones) {
 	    	Scanner scanner = new Scanner(System.in);
 	    	System.out.print("Cuantas ubicaciones extra desea?");
@@ -523,7 +535,13 @@ public class GrafoFunciones {
 	        
 	    	
 	    }
-	    
+	    /*
+	     * void agregarAristaExtra(int indice1, int numUbicaciones) 
+	     * esta funcion sirve para agregar arista extra luego
+	     * de haber definido las ubicaciones y aristas iniciales,
+	     *  la funcion se encarga de crear una matriz nueva y 
+	     *  ampliada para poder presentarla como el grafo
+	     */
 	    public void agregarAristaExtra(int indice1, int numUbicaciones) {
 	    	Arista nueva = new Arista(numUbicaciones);
 	    	for (int i = 0; i < grafoMatriz.getPeso().length; i++) {
@@ -788,7 +806,11 @@ public class GrafoFunciones {
         }
 	    
 	    
-	    
+	    /*
+	     * void dijkstra() este algoritmo de dijkstra se encarga deencontarr la ruta mas corta 
+	     * de la matriz de adyacencia del grafo, este algoritmo te pide un destino de inicio y un destino final
+	     * y recorrera las ubicaciones con menor peso y las marcara como visitadas para no utilizalas de nuevo
+	     */
 	    public void dijkstra() {
 	    	
 	    	int inicio = 0, fin = 0;
@@ -889,6 +911,11 @@ public class GrafoFunciones {
 	        }
 	        imprimirgrafoMatriz();
 	    }
+	    /*
+	     * int minDistance(int[] distancias, boolean[] visitado)
+	     * funcion utilizada en dijkstra para determinar la ubicacion con menor distancia 
+	     * a la que se puede ir , siempre y cuando no este visitado
+	     */
 	    public int minDistance(int[] distancias, boolean[] visitado) {
 	        int min = Integer.MAX_VALUE;
 	        int minIndex = -1;
@@ -903,10 +930,16 @@ public class GrafoFunciones {
 
 	        return minIndex;
 	    }
+	    /*
+	     * void floydWarshall()
+	     * Este método implementa el algoritmo de Floyd-Warshall
+	     *  para encontrar los caminos más cortos entre todos los pares 
+	     *  de vértices en un grafo ponderado. Si no hay coneccion directa
+	     *   al final en la matriz presentara un INF de infinito
+	     */
 	    public void floydWarshall() {
 	    	
 	        int numVertices = ubicaciones.size();
-	        //int[][] grafo = new int[numVertices][numVertices];
 	        int[][] distancias = new int[numVertices][numVertices];
 	        int[][] camino = new int[numVertices][numVertices];
 	        int[][] distanciasTiempo = new int[numVertices][numVertices];
@@ -950,36 +983,55 @@ public class GrafoFunciones {
 	            }
 	        }
 	        System.out.print("Resultados con el peso\n");
+	        System.out.print("  ");
+	        for (int i = 0; i < ubicaciones.size(); i++) {
+	        	System.out.print(String.format("%3c ",(char) ('A' + i)));
+	        }
+	        System.out.println();
+	        
 	        // Imprimir los resultados
 	        for (int i = 0; i < numVertices; i++) {
+	        	System.out.print((char) ('A' + i) + " ");
 	            for (int j = 0; j < numVertices; j++) {
 	                // Si la distancia es Integer.MAX_VALUE, significa que no hay conexión directa
 	                if (distancias[i][j] == Integer.MAX_VALUE) {
 	                    // En este caso, se imprime "INF" para indicar que no hay conexión directa
-	                    System.out.print("INF\t");
+	                    
+	                    System.out.print(String.format("%3s ","INF"));
 	                } else {
 	                    // Si hay una conexión directa, se imprime la distancia
-	                    System.out.print(distancias[i][j] + "\t");
+	                    System.out.print(String.format("%3d ",distancias[i][j]));
 	                }
 	            }
 	            System.out.println();
 	        }
 	        System.out.print("Resultados con el tiempo\n");
 	        // Imprimir los resultados
+	        System.out.print("  ");
+	        for (int i = 0; i < ubicaciones.size(); i++) {
+	        	System.out.print(String.format("%3c ",(char) ('A' + i)));
+	        }
+	        System.out.println();
 	        for (int i = 0; i < numVertices; i++) {
+	        	System.out.print((char) ('A' + i) + " ");
 	            for (int j = 0; j < numVertices; j++) {
 	                // Si la distancia es Integer.MAX_VALUE, significa que no hay conexión directa
 	                if (distanciasTiempo[i][j] == Integer.MAX_VALUE) {
 	                    // En este caso, se imprime "INF" para indicar que no hay conexión directa
-	                    System.out.print("INF\t");
+	                	System.out.print(String.format("%3s ","INF"));
 	                } else {
 	                    // Si hay una conexión directa, se imprime la distancia
-	                    System.out.print(distanciasTiempo[i][j] + "\t");
+	                    System.out.print(String.format("%3d ",distanciasTiempo[i][j]));
 	                }
 	            }
 	            System.out.println();
 	        }
 	    }
+	    /*
+	     * void rutaPersonalizada()
+	     * esta funcion te permite  escoger un destino inicial y uno final, para luego
+	     * ir eligiendo la ruta paso por paso como lo desee el usuario, haciendo mas iterativo el camino
+	     */
 	    public void rutaPersonalizada() {
 	    	int peso =0, tiempo = 0;
 	    	Scanner scanner = new Scanner(System.in);
