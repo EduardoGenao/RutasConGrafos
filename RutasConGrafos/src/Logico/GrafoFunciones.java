@@ -244,8 +244,8 @@ public class GrafoFunciones {
 		    	Scanner scanner = new Scanner(System.in); 
 		    	
 			    System.out.println("\nAhora, ¿Que desea hacer?\n1 = Agregar Otra Ubicacion\n2 = Editar Una Ubicacion o sus rutas"
-			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices\n5 = Encontrar ruta mas corta"
-			    		+ "\n6 = Crear una ruta interconectada minima \n7 = Encontrar el camino más corto entre todas las ubicaciones\n" + 
+			    		+ "\n3 = Eliminar una Ubicacion\n4 = Imprimir matrices\n5 = Encontrar ruta mas corta (Dijkstra)"
+			    		+ "\n6 = Crear una ruta interconectada minima (Prim y kruskal) \n7 = Encontrar el camino más corto entre todas las ubicaciones (Floyd-Warshall)\n" + 
 			    		"8 = Ruta Personalizada \n9 = Salir del programa");
 			    ans = scanner.nextInt();
 			    if(ans == 1)
