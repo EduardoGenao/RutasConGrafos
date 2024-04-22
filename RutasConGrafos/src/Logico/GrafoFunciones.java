@@ -199,6 +199,10 @@ public class GrafoFunciones {
 	    
 	    //void imprimirgrafoMatriz, como dice su nombre se encarga de imprimir las matrices del grafo en su estado actual.
 	    public void imprimirgrafoMatriz() {
+	    	System.out.println("\nLista de Ubicaciones:");
+    		for (int i = 0; i < ubicaciones.size(); i++) {
+    			System.out.println((i+1) + ". " + ubicaciones.get(i));
+		    }
 	    	System.out.println("\nLa lista de ubicaciones quedo así (Peso)");
 	    	 // Imprimir la cabecera con las letras de los vértices
 	        System.out.print("  ");
