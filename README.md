@@ -1,4 +1,4 @@
-(este programa fue creado como el proyecto final de la materia Algoritmos Clasicos y estructura de datos, de parte de Eduardo Genao (10149035) y Jean Carlos Perez)
+(este programa fue creado como el proyecto final de la materia Algoritmos Clasicos y estructura de datos, de parte de Eduardo Genao (10149035) y Jean Carlos Perez (10148917))
 
 SISTEMA DE GESTIÓN DE RUTAS
 
